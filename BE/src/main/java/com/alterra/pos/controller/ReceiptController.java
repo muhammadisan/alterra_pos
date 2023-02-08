@@ -51,7 +51,7 @@ public class ReceiptController {
         List<Orders> orders = ordersRepository.findAllByOrderNo(orderNo);
         if (orders.size() == 0) throw new Exception("Order No not found with no " + orderNo);
         List<Receipt> receipts = receiptRepository.findAllByOrderNo(orderNo);
-        if (orders.size() > 0) throw new Exception("Order No have been completed with no " + orderNo);
+        if (receipts.size() > 0) throw new Exception("Order No have been completed with no " + orderNo);
 
         int paymentMethodId = receiptDto.getPaymentMethodId();
         PaymentMethod paymentMethod = paymentMethodRepository.findById(paymentMethodId).orElse(null);
