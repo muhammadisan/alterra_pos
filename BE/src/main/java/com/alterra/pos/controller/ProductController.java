@@ -1,6 +1,5 @@
 package com.alterra.pos.controller;
 
-import com.alterra.pos.dto.ProductPriceAndStockDto;
 import com.alterra.pos.entity.Category;
 import com.alterra.pos.entity.PriceAndStock;
 import com.alterra.pos.entity.Product;
@@ -12,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -29,14 +29,10 @@ public class ProductController {
     private PriceAndStockRepository priceAndStockRepository;
 
     @GetMapping
-    public List<Product> getProducts() {
-        return productRepository.findAllByIsValidTrue();
-    }
+    public List<Product> getProducts() { return productRepository.findAllByIsValidTrue(); }
 
     @GetMapping("/{id}")
-    public Optional<Product> getProductById(@PathVariable Integer id) {
-        return productRepository.findById(id);
-    }
+    public Optional<Product> getProductById(@PathVariable Integer id) { return productRepository.findById(id); }
 
     @GetMapping("/category/{categoryId}")
     public List<Product> getProductsByCategoryId(@PathVariable Integer categoryId) {
@@ -45,69 +41,53 @@ public class ProductController {
 
     @PostMapping("/{categoryId}")
     @Transactional(rollbackFor = Exception.class)
-    public ProductPriceAndStockDto addProduct(@PathVariable Integer categoryId,
-                                              @Validated @RequestBody ProductPriceAndStockDto productPriceAndStockDto)
-            throws Exception
-    {
+    public Product addProduct(@PathVariable Integer categoryId, @Validated @RequestBody Product product) throws Exception {
         // validate
         Category category = categoryRepository.findById(categoryId).orElse(null);
         if (category == null) throw new Exception("Category not found with id " + categoryId);
         if (!category.getIsValid()) throw new Exception("Category is no longer valid with id " + categoryId);
 
         // save
-        Product product = productPriceAndStockDto.getProduct();
+        PriceAndStock priceAndStock = priceAndStockRepository.saveAndFlush(product.getPriceAndStock());
         product.setCategory(category);
-        Product product1 = productRepository.saveAndFlush(product);
+        product.setPriceAndStock(priceAndStock);
 
-        PriceAndStock priceAndStock = productPriceAndStockDto.getPriceAndStock();
-        priceAndStock.setProduct(product1);
-        priceAndStock.setModifiedAt(new Date());
-        PriceAndStock priceAndStock1 = priceAndStockRepository.save(priceAndStock);
-
-        // response
-        ProductPriceAndStockDto res = new ProductPriceAndStockDto();
-        res.setProduct(product1);
-        res.setPriceAndStock(priceAndStock1);
-
-        return res;
+        return productRepository.save(product);
     }
 
-    @PutMapping("/{productId}")
-    public ProductPriceAndStockDto editProduct(@PathVariable Integer productId,
-                                               @Validated @RequestBody ProductPriceAndStockDto productPriceAndStockDto)
-            throws Exception
-    {
+    @PutMapping
+    @Transactional(rollbackFor = Exception.class)
+    public Product editProduct(@Validated @RequestBody Product product) throws Exception {
         // validate
-        Product product = productRepository.findById(productId).orElse(null);
-        if (product == null) throw new Exception("Product not found with id " + productId);
-        if (!product.getIsValid()) throw new Exception("Product is no longer valid with id " + productId);
+        int productId = product.getId();
+        Product product1 = productRepository.findById(productId).orElse(null);
+        if (product1 == null) throw new Exception("Product not found with id " + productId);
+        if (!product1.getIsValid()) throw new Exception("Product is no longer valid with id " + productId);
+        if (product.getPriceAndStock().getId() != product1.getPriceAndStock().getId()) throw new Exception("Product id doesn't match with Price id with product id " + productId);
 
         int categoryId = product.getCategory().getId();
         Category category = categoryRepository.findById(categoryId).orElse(null);
         if (category == null) throw new Exception("Category not found with id " + categoryId);
         if (!category.getIsValid()) throw new Exception("Category is no longer valid with id " + categoryId);
 
-        int priceAndStockId = -1;
-        PriceAndStock priceAndStock = priceAndStockRepository.findByProductId(productId).orElse(null);
-        if (priceAndStock != null) priceAndStockId = priceAndStock.getId(); // use available id
+        product.setModifiedAt(new Date());
+        product.getPriceAndStock().setModifiedAt(new Date());
+        product.setCategory(category);
+        priceAndStockRepository.save(product.getPriceAndStock());
 
-        // save
-        Product product1 = productPriceAndStockDto.getProduct();
-        product1.setId(productId);
-        product1.setCategory(category);
-        Product product2 = productRepository.saveAndFlush(product1);
+        return productRepository.save(product);
+    }
 
-        PriceAndStock priceAndStock1 = productPriceAndStockDto.getPriceAndStock();
-        if (priceAndStockId != -1) priceAndStock1.setId(priceAndStockId);
-        priceAndStock1.setProduct(product2);
-        priceAndStock1.setModifiedAt(new Date());
-        PriceAndStock priceAndStock2 = priceAndStockRepository.save(priceAndStock1);
+    @DeleteMapping("/{productId}")
+    public String deleteProduct(@PathVariable Integer productId) throws Exception {
+        Product product = productRepository.findById(productId).orElse(null);
+        if (product == null) throw new Exception("Product not found with id " + productId);
 
-        // response
-        ProductPriceAndStockDto res = new ProductPriceAndStockDto();
-        res.setProduct(product2);
-        res.setPriceAndStock(priceAndStock2);
+        product.setIsValid(false);
+        product.setModifiedAt(new Date());
 
-        return res;
+        productRepository.save(product);
+
+        return "Product deleted with id " + productId;
     }
 }

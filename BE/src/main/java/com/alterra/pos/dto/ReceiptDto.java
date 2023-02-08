@@ -9,7 +9,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class OrdersDto {
+public class ReceiptDto {
     @Data
     @AllArgsConstructor
     @NoArgsConstructor
@@ -17,7 +17,8 @@ public class OrdersDto {
         private Integer productId;
         private Integer amount;
     }
-
-    private List<OrdersDto.Products> products;
+    private List<ReceiptDto.Products> products;
+    private String orderNo;
     private Integer paymentMethodId;
+    private Integer adminId;
 }

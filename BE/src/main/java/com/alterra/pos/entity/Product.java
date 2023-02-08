@@ -1,14 +1,10 @@
 package com.alterra.pos.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
-import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
 import java.util.Date;
@@ -24,8 +20,11 @@ public class Product {
 
     @ManyToOne
     @JoinColumn(name = "category_id")
-//    @JsonIgnore
     private Category category;
+
+    @OneToOne
+    @JoinColumn(name = "price_and_stock_id")
+    private PriceAndStock priceAndStock;
 
     @Column(nullable = false)
     private String name;

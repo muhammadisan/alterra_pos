@@ -1,6 +1,5 @@
 package com.alterra.pos.controller;
 
-import com.alterra.pos.entity.Membership;
 import com.alterra.pos.entity.PaymentMethod;
 import com.alterra.pos.repository.PaymentMethodRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +11,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("paymentMethod")
-public class PaymentMethodCoontroller {
+public class PaymentMethodController {
     @Autowired
     private PaymentMethodRepository paymentMethodRepository;
 
