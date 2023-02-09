@@ -1,15 +1,17 @@
 import React from "react";
-import { Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Sidebar from "./components/Sidebar";
-// import Home from "./pages/home";
+import Stock from "./pages/stock";
 
 const App = () => {
   return (
     <div>
-      <Routes>
-        <Route path="/" element={<Sidebar />} />
-        {/* <Route path="/" element={<Home />} /> */}
-      </Routes>
+      <BrowserRouter>
+        <Routes>
+          <Route path='/' element={<Sidebar />} />
+          <Route exact path="/stock" element={<Stock />} />
+        </Routes>
+      </BrowserRouter>
     </div>
   );
 };

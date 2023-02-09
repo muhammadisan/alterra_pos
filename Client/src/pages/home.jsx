@@ -1,9 +1,9 @@
-import React, { Component } from "react";
-import { Row, Col, Container } from "react-bootstrap";
-import { Hasil, ListCategories, Menus } from "../components";
-import { API_URL } from "../utils/constants";
-import axios from "axios";
-import swal from "sweetalert";
+// import React, { Component } from "react";
+// import { Row, Col, Container } from "react-bootstrap";
+// import { Hasil, ListCategories, Menus } from "../components";
+// import { API_URL } from "../utils/constants";
+// import axios from "axios";
+// import swal from "sweetalert";
 
 export default class Home extends Component {
   constructor(props) {
