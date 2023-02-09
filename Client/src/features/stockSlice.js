@@ -21,7 +21,6 @@ export const getStockAsync = () => async (dispatch) => {
     try {
         const response = await axios.get(`${API_URL}/products`);
         dispatch(getStock(response.data));
-        console.log(response.data)
     } catch (err) {
         throw new Error(err);
     }
