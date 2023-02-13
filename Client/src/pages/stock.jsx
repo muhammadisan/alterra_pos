@@ -1,13 +1,37 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import DataTable from 'react-data-table-component';
+import FilterComponent from "../components/FilterComponent";
 import "./stock.css"
 import http from "../http"
+import Box from '@mui/material/Box';
+import TextField from '@mui/material/TextField';
+import Modal from '@mui/material/Modal';
+import InputLabel from '@mui/material/InputLabel';
+import Select from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
+import Button from '@mui/material/Button';
+import DeleteForeverOutlinedIcon from '@mui/icons-material/DeleteForeverOutlined';
+import Edit from '@mui/icons-material/Edit';
+
+const style = {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: 400,
+    bgcolor: 'background.paper',
+    border: '2px solid #000',
+    boxShadow: 24,
+    p: 4,
+};
 
 export default function Stock() {
     const [stocks, setStocks] = useState([]);
     const [categories, setCategories] = useState([]);
     const [data, setData] = useState([]);
-
+    const [filterText, setFilterText] = React.useState('');
+    const [resetPaginationToggle, setResetPaginationToggle] = React.useState(false);
     const [newStock, setNewStock] = useState({
         name: "",
         description: "",
@@ -17,41 +41,78 @@ export default function Stock() {
         },
         createdBy: ""
     });
-    const [newCategoryId, setNewCategoryId] = useState(null);
+    const [newCategoryId, setNewCategoryId] = useState('');
+    const [modalAddShow, setModalAddShow] = useState(false);
+    const [modalEditShow, setModalEditShow] = useState(false);
+    const [modalDeleteShow, setModalDeleteShow] = useState(false);
 
     const columns = [
-        {
-            name: 'No',
-            selector: row => row.no,
-            sortable: true,
-        },
         {
             name: 'Category',
             selector: row => row.category,
             sortable: true,
+            width: '10%',
         },
         {
             name: 'Name',
             selector: row => row.name,
             sortable: true,
+            width: '30%',
+        },
+        {
+            name: 'Description',
+            selector: row => row.description,
+            sortable: true,
+            width: '30%',
         },
         {
             name: 'Price',
             selector: row => row.price,
             sortable: true,
+            width: '10%',
         },
         {
             name: 'Stock',
             selector: row => row.stock,
             sortable: true,
-        }
+            width: '10%',
+        },
+        {
+            name: 'Actions',
+            cell: (row) =>
+                <div style={{ display: "flex" }} >
+                    <Button onClick={() => setModalEditShow(true)} color="warning"><Edit></Edit></Button>
+                    <Button onClick={() => setModalDeleteShow(true)} color="error"><DeleteForeverOutlinedIcon></DeleteForeverOutlinedIcon></Button>
+                </div >,
+            ignoreRowClick: true,
+            allowOverflow: true,
+            button: true,
+            width: '10%',
+        },
     ]
 
+    const filteredItems = data.filter(
+        item => item.name && item.name.toLowerCase().includes(filterText.toLowerCase()),
+    );
+    const subHeaderComponentMemo = React.useMemo(() => {
+        const handleClear = () => {
+            if (filterText) {
+                setResetPaginationToggle(!resetPaginationToggle);
+                setFilterText('');
+            }
+        };
+
+        return (
+            <FilterComponent onFilter={e => setFilterText(e.target.value)} onClear={handleClear} filterText={filterText} />
+        );
+    }, [filterText, resetPaginationToggle]);
+
+    const actions = (<Button variant="contained" color="success" onClick={() => setModalAddShow(true)}>Add New Product</Button>);
     const conditionalRowStyles = [
         {
             when: row => row.category == 'Food',
             style: {
-                backgroundColor: 'rgba(63, 195, 128, 0.9)',
+                backgroundColor: '#9c27b0',
                 color: 'white',
                 '&:hover': {
                     cursor: 'pointer',
@@ -61,7 +122,7 @@ export default function Stock() {
         {
             when: row => row.category == 'Drink',
             style: {
-                backgroundColor: 'rgba(248, 148, 6, 0.9)',
+                backgroundColor: '#ba68c8',
                 color: 'white',
                 '&:hover': {
                     cursor: 'pointer',
@@ -71,7 +132,7 @@ export default function Stock() {
         {
             when: row => row.category == 'Meals',
             style: {
-                backgroundColor: 'rgba(242, 38, 19, 0.9)',
+                backgroundColor: '#7b1fa2',
                 color: 'white',
                 '&:hover': {
                     cursor: 'not-allowed',
@@ -88,6 +149,7 @@ export default function Stock() {
                     no: index + 1,
                     category: stock.category.name,
                     name: stock.name,
+                    description: stock.description,
                     price: stock.priceAndStock.price,
                     stock: stock.priceAndStock.stock
                 }
@@ -121,6 +183,7 @@ export default function Stock() {
             http.post(`/products/${newCategoryId}`, newStock).then((res) => {
                 setStocks([...stocks, res.data])
                 setData([...data, {
+                    product_id: res.data.id,
                     no: data.length + 1,
                     category: res.data.category.name,
                     name: res.data.name,
@@ -128,43 +191,88 @@ export default function Stock() {
                     stock: res.data.priceAndStock.stock
                 }])
             })
+            setModalAddShow(false)
         }
     };
 
     return (
-        <div className="App" style={{width: "100%"}}>
-            {/* <input
-                value={newStock.name}
-                type="text"
-                onChange={(handleChange)}
-                name="name"
-            />
-            <input
-                value={newStock.description}
-                type="text"
-                onChange={handleChange}
-                name="description"
-            />
-            <input
-                value={newStock.priceAndStock.price}
-                type="number"
-                onChange={handleChange}
-                name="price"
-            />
-            <input
-                value={newStock.priceAndStock.stock}
-                type="number"
-                onChange={handleChange}
-                name="stock"
-            />
-            <button onClick={addNewStock}>add product</button> */}
-
+        <div className="App" style={{ width: "100%" }}>
             <DataTable
                 title="Product Stocks"
                 columns={columns}
-                data={data}
+                defaultSortField="Category"
+                data={filteredItems}
                 conditionalRowStyles={conditionalRowStyles}
+                subHeaderComponent={subHeaderComponentMemo}
+                actions={actions}
+                pagination
+                subHeader
+                persistTableHead
             />
+
+            <Modal
+                open={modalAddShow}
+                onClose={() => setModalAddShow(false)}
+                aria-labelledby="modal-modal-title"
+                aria-describedby="modal-modal-description"
+            >
+                <Box sx={style}>
+                    <div style={{ textAlign: "center", fontSize: "20px" }}>New Product</div>
+                    <FormControl variant="filled" sx={{ m: 1, minWidth: 120, display: "flex" }}>
+                        <InputLabel id="select-category-label">Category</InputLabel>
+                        <Select
+                            style={{ margin: "10px" }}
+                            labelId="select-category-label"
+                            id="select-category"
+                            value={newCategoryId}
+                            onChange={(e) => setNewCategoryId(e.target.value)}
+                        >
+                            {categories.map((category) => {
+                                return (<MenuItem key={category.id} value={category.id}>{category.name}</MenuItem>)
+                            })}
+                        </Select>
+                        <TextField style={{ margin: "10px" }} onChange={handleChange} value={newStock.name} name="name" label="Name" variant="filled" />
+                        <TextField style={{ margin: "10px" }} onChange={handleChange} value={newStock.description} name="description" label="Description" variant="filled" multiline rows={2} />
+                        <div style={{ display: "flex" }}>
+                            <div><TextField style={{ margin: "10px" }} onChange={handleChange} value={newStock.priceAndStock.price} name="price" label="Price" variant="filled" type="number" /></div>
+                            <div><TextField style={{ margin: "10px" }} onChange={handleChange} value={newStock.priceAndStock.stock} name="stock" label="Stock" variant="filled" type="number" /></div>
+                        </div>
+                    </FormControl>
+                    <Button variant="contained" sx={{ float: "right" }} onClick={addNewStock} color="success">ADD</Button>
+                </Box>
+            </Modal>
+
+            <Modal
+                open={modalAddShow}
+                onClose={() => setModalAddShow(false)}
+                aria-labelledby="modal-modal-title"
+                aria-describedby="modal-modal-description"
+            >
+                <Box sx={style}>
+                    <div style={{ textAlign: "center", fontSize: "20px" }}>New Product</div>
+                    <FormControl variant="filled" sx={{ m: 1, minWidth: 120, display: "flex" }}>
+                        <InputLabel id="select-category-label">Category</InputLabel>
+                        <Select
+                            style={{ margin: "10px" }}
+                            labelId="select-category-label"
+                            id="select-category"
+                            value={newCategoryId}
+                            onChange={(e) => setNewCategoryId(e.target.value)}
+                        >
+                            {categories.map((category) => {
+                                return (<MenuItem key={category.id} value={category.id}>{category.name}</MenuItem>)
+                            })}
+                        </Select>
+                        <TextField style={{ margin: "10px" }} onChange={handleChange} value={newStock.name} name="name" label="Name" variant="filled" />
+                        <TextField style={{ margin: "10px" }} onChange={handleChange} value={newStock.description} name="description" label="Description" variant="filled" multiline rows={2} />
+                        <div style={{ display: "flex" }}>
+                            <div><TextField style={{ margin: "10px" }} onChange={handleChange} value={newStock.priceAndStock.price} name="price" label="Price" variant="filled" type="number" /></div>
+                            <div><TextField style={{ margin: "10px" }} onChange={handleChange} value={newStock.priceAndStock.stock} name="stock" label="Stock" variant="filled" type="number" /></div>
+                        </div>
+                    </FormControl>
+                    <Button variant="contained" sx={{ float: "right" }} onClick={addNewStock} color="success">ADD</Button>
+                </Box>
+            </Modal>
         </div>
     );
 }
