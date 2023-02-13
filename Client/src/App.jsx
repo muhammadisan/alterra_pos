@@ -2,6 +2,7 @@ import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Sidebar from "./components/Sidebar";
 import Stock from "./pages/stock";
+import Home from "./pages/home";
 
 const App = () => {
   return (
