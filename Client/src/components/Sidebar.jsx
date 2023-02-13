@@ -60,9 +60,6 @@ const Sidebar = ({ children }) => {
           ))}
         </div>
       </div>
-      <div className="text-xl text-gray-900 font-semibold w-full">
-        {children}
-      </div>
     </section>
   );
 };

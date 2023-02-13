@@ -109,13 +109,13 @@ const Home = () => {
 
   return (
     <>
-      <div className="flex h-screen bg-white">
+      <div className="w-full flex h-screen bg-white">
         <div className="flex-1 ">
           <div className="navbar bg-base-100">
             <div className="flex-1">
-              <a className="btn btn-ghost normal-case text-xl">
+              {/* <a className="btn btn-ghost normal-case text-xl">
                 Point of Sales
-              </a>
+              </a> */}
             </div>
             <div className="flex-none gap-2">
               <div className="form-control">
