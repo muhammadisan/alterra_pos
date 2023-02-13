@@ -222,7 +222,7 @@ const Home = () => {
                     </div>
                     <div className="">
                       <label>{item.price} </label>
-                      <label> {item.stock}</label>
+                      {/* <label> {item.stock}</label> */}
                     </div>
                   </div>
                 </div>
