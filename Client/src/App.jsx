@@ -7,9 +7,10 @@ const App = () => {
   return (
     <div>
       <BrowserRouter>
-        <div style={{ display: "flex"}}>
+        <div style={{ display: "flex" }}>
           <Sidebar />
           <Routes>
+            <Route key={"/home"} path="/home" element={<Home />} />
             <Route exact path="/stock" element={<Stock />} />
           </Routes>
         </div>
