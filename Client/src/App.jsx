@@ -7,10 +7,12 @@ const App = () => {
   return (
     <div>
       <BrowserRouter>
-        <Routes>
-          <Route path='/' element={<Sidebar />} />
-          <Route exact path="/stock" element={<Stock />} />
-        </Routes>
+        <div style={{ display: "flex"}}>
+          <Sidebar />
+          <Routes>
+            <Route exact path="/stock" element={<Stock />} />
+          </Routes>
+        </div>
       </BrowserRouter>
     </div>
   );
