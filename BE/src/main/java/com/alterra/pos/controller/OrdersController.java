@@ -41,6 +41,10 @@ public class OrdersController {
         if (paymentMethod == null) throw new Exception("Payment method not found with id " + paymentMethodId);
         if (!paymentMethod.getIsValid()) throw new Exception("Payment method is not valid with id " + paymentMethodId);
 
+        String orderNo = ordersDto.getOrderNo();
+        List<Orders> orders2 = ordersRepository.findAllByOrderNo(orderNo);
+        if (orders2.size() != 0) throw new Exception("Orders already printed with Order No " + orderNo);
+
         List<Orders> res = new ArrayList<Orders>();
         List<OrdersDto.Products> products = ordersDto.getProducts();
         for (OrdersDto.Products product : products) {
@@ -57,7 +61,7 @@ public class OrdersController {
 
             // save
             Orders orders = new Orders();
-            orders.setOrderNo(ordersDto.getOrderNo());
+            orders.setOrderNo(orderNo);
             orders.setProduct(product1);
             orders.setAmount(product.getAmount());
             orders.setPrice(product1.getPriceAndStock().getPrice());
