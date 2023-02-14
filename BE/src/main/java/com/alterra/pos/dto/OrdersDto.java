@@ -18,6 +18,7 @@ public class OrdersDto {
         private Integer amount;
     }
 
+    private String orderNo;
     private List<OrdersDto.Products> products;
     private Integer paymentMethodId;
 }

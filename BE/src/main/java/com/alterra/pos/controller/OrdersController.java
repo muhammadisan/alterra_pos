@@ -41,10 +41,6 @@ public class OrdersController {
         if (paymentMethod == null) throw new Exception("Payment method not found with id " + paymentMethodId);
         if (!paymentMethod.getIsValid()) throw new Exception("Payment method is not valid with id " + paymentMethodId);
 
-        // generate order number
-        Date date = new Date();
-        String orderNo = date.getTime() + "";
-
         List<Orders> res = new ArrayList<Orders>();
         List<OrdersDto.Products> products = ordersDto.getProducts();
         for (OrdersDto.Products product : products) {
@@ -61,7 +57,7 @@ public class OrdersController {
 
             // save
             Orders orders = new Orders();
-            orders.setOrderNo(orderNo);
+            orders.setOrderNo(ordersDto.getOrderNo());
             orders.setProduct(product1);
             orders.setAmount(product.getAmount());
             orders.setPrice(product1.getPriceAndStock().getPrice());
