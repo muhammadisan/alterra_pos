@@ -6,6 +6,7 @@ import com.alterra.pos.entity.Product;
 import com.alterra.pos.repository.CategoryRepository;
 import com.alterra.pos.repository.PriceAndStockRepository;
 import com.alterra.pos.repository.ProductRepository;
+import com.alterra.pos.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
@@ -27,8 +28,11 @@ public class ProductController {
     @Autowired
     private PriceAndStockRepository priceAndStockRepository;
 
+    @Autowired
+    ProductService productService;
+
     @GetMapping
-    public List<Product> getProducts() { return productRepository.findAllByIsValidTrue(); }
+    public List<Product> getProducts() { return productService.getProducts(); }
 
     @GetMapping("/{id}")
     public Optional<Product> getProductById(@PathVariable Integer id) { return productRepository.findById(id); }
@@ -41,17 +45,7 @@ public class ProductController {
     @PostMapping("/{categoryId}")
     @Transactional(rollbackFor = Exception.class)
     public Product addProduct(@PathVariable Integer categoryId, @Validated @RequestBody Product product) throws Exception {
-        // validate
-        Category category = categoryRepository.findById(categoryId).orElse(null);
-        if (category == null) throw new Exception("Category not found with id " + categoryId);
-        if (!category.getIsValid()) throw new Exception("Category is no longer valid with id " + categoryId);
-
-        // save
-        PriceAndStock priceAndStock = priceAndStockRepository.saveAndFlush(product.getPriceAndStock());
-        product.setCategory(category);
-        product.setPriceAndStock(priceAndStock);
-
-        return productRepository.save(product);
+        return productService.addProduct(categoryId, product);
     }
 
     @PutMapping
