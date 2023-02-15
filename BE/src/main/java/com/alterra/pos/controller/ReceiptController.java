@@ -3,6 +3,7 @@ package com.alterra.pos.controller;
 import com.alterra.pos.dto.ReceiptDto;
 import com.alterra.pos.entity.*;
 import com.alterra.pos.repository.*;
+import com.alterra.pos.service.ReceiptService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
@@ -28,16 +29,19 @@ public class ReceiptController {
     @Autowired
     private AdminRepository adminRepository;
 
+    @Autowired
+    ReceiptService receiptService;
+
     @GetMapping
     public List<Receipt> getReceipts() {
-        return receiptRepository.findAll();
+        return receiptService.getReceipts();
     }
 
     @GetMapping("/orderNo/{orderNo}")
-    public List<Receipt> getReceiptsByOrderNo(@PathVariable String orderNo) { return receiptRepository.findAllByOrderNo(orderNo); }
+    public List<Receipt> getReceiptsByOrderNo(@PathVariable String orderNo) { return receiptService.getReceiptsByOrderNo(orderNo); }
 
     @GetMapping("/receiptNo/{receiptNo}")
-    public List<Receipt> getReceiptsByReceiptNo(@PathVariable String receiptNo) { return receiptRepository.findAllByReceiptNo(receiptNo); }
+    public List<Receipt> getReceiptsByReceiptNo(@PathVariable String receiptNo) { return receiptService.getReceiptsByReceiptNo(receiptNo); }
 
     @PostMapping
     @Transactional(rollbackFor = Exception.class)
