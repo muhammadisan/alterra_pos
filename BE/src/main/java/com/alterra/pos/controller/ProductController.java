@@ -35,11 +35,11 @@ public class ProductController {
     public List<Product> getProducts() { return productService.getProducts(); }
 
     @GetMapping("/{id}")
-    public Optional<Product> getProductById(@PathVariable Integer id) { return productRepository.findById(id); }
+    public Optional<Product> getProductById(@PathVariable Integer id) { return productService.getProductById(id); }
 
     @GetMapping("/category/{categoryId}")
     public List<Product> getProductsByCategoryId(@PathVariable Integer categoryId) {
-        return productRepository.findAllByCategoryId(categoryId);
+        return productService.getProductsByCategoryId(categoryId);
     }
 
     @PostMapping("/{categoryId}")
@@ -51,36 +51,11 @@ public class ProductController {
     @PutMapping
     @Transactional(rollbackFor = Exception.class)
     public Product editProduct(@Validated @RequestBody Product product) throws Exception {
-        // validate
-        int productId = product.getId();
-        Product product1 = productRepository.findById(productId).orElse(null);
-        if (product1 == null) throw new Exception("Product not found with id " + productId);
-        if (!product1.getIsValid()) throw new Exception("Product is no longer valid with id " + productId);
-        if (product.getPriceAndStock().getId() != product1.getPriceAndStock().getId()) throw new Exception("Product id doesn't match with Price id with product id " + productId);
-
-        int categoryId = product.getCategory().getId();
-        Category category = categoryRepository.findById(categoryId).orElse(null);
-        if (category == null) throw new Exception("Category not found with id " + categoryId);
-        if (!category.getIsValid()) throw new Exception("Category is no longer valid with id " + categoryId);
-
-        product.setModifiedAt(new Date());
-        product.getPriceAndStock().setModifiedAt(new Date());
-        product.setCategory(category);
-        priceAndStockRepository.save(product.getPriceAndStock());
-
-        return productRepository.save(product);
+        return productService.editProduct(product);
     }
 
     @DeleteMapping("/{productId}")
     public String deleteProduct(@PathVariable Integer productId) throws Exception {
-        Product product = productRepository.findById(productId).orElse(null);
-        if (product == null) throw new Exception("Product not found with id " + productId);
-
-        product.setIsValid(false);
-        product.setModifiedAt(new Date());
-
-        productRepository.save(product);
-
-        return "Product deleted with id " + productId;
+        return productService.deleteProduct(productId);
     }
 }
