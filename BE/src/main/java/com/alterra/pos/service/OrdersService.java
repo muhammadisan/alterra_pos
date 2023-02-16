@@ -25,6 +25,7 @@ public class OrdersService {
     private PaymentMethodRepository paymentMethodRepository;
     @Autowired
     private ProductRepository productRepository;
+    @Autowired
     private PriceAndStockRepository priceAndStockRepository;
 
     public List<Orders> getOrders() {
