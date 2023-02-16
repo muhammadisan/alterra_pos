@@ -27,7 +27,8 @@ public class User {
     @Column(nullable = false)
     private String password;
 
-    @Column(name = "role_id", nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "role_id", nullable = false)
     private Role role;
 
     @Column(name = "is_valid", columnDefinition = "boolean default true")
