@@ -21,4 +21,5 @@ public class OrdersDto {
     private String orderNo;
     private List<OrdersDto.Products> products;
     private Integer paymentMethodId;
+    private Integer userId;
 }

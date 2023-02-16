@@ -42,8 +42,8 @@ public class Receipt {
     private PaymentMethod paymentMethod;
 
     @ManyToOne
-    @JoinColumn(name = "admin_id", nullable = false)
-    private Admin admin;
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     @CreationTimestamp

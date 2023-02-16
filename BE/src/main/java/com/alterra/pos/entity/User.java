@@ -4,21 +4,20 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.CreationTimestamp;
-
-import java.util.Date;
 
 @Entity
-@Table(name = "membership")
+@Table(name = "user")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Membership {
+public class User {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @Column(nullable = false)
     private String name;
+
+    private String position;
 
     private String phone;
 
@@ -28,13 +27,9 @@ public class Membership {
     @Column(nullable = false)
     private String password;
 
+    @Column(name = "role_id", nullable = false)
+    private Role role;
+
     @Column(name = "is_valid", columnDefinition = "boolean default true")
     private Boolean isValid = true;
-
-    @Column(name = "created_by", nullable = false, updatable = false)
-    private String createdBy = "system";
-
-    @Column(name = "created_at", nullable = false, updatable = false)
-    @CreationTimestamp
-    private Date createdAt;
 }

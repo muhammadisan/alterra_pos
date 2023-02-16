@@ -19,6 +19,7 @@ public class ReceiptDto {
     }
     private List<ReceiptDto.Products> products;
     private String orderNo;
+    private String receiptNo;
     private Integer paymentMethodId;
-    private Integer adminId;
+    private Integer userId;
 }

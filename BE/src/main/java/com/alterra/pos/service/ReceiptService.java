@@ -24,7 +24,7 @@ public class ReceiptService {
     @Autowired
     private PriceAndStockRepository priceAndStockRepository;
     @Autowired
-    private AdminRepository adminRepository;
+    private UserRepository userRepository;
 
     public List<Receipt> getReceipts() {
         return receiptRepository.findAll();
@@ -41,9 +41,9 @@ public class ReceiptService {
     @Transactional(rollbackFor = Exception.class)
     public List<Receipt> addReceipt(ReceiptDto receiptDto) throws Exception {
         // validasi
-        int adminId = receiptDto.getAdminId();
-        Admin admin = adminRepository.findById(adminId).get();
-        if (admin == null || !admin.getIsValid()) throw new Exception("Unauthorized");
+        int adminId = receiptDto.getUserId();
+        User admin = userRepository.findById(adminId).get();
+        if (admin == null || !admin.getIsValid() || admin.getRole().getRole() != "ADMIN") throw new Exception("Unauthorized");
 
         String orderNo = receiptDto.getOrderNo();
         List<Orders> orders = ordersRepository.findAllByOrderNo(orderNo);
@@ -55,10 +55,6 @@ public class ReceiptService {
         PaymentMethod paymentMethod = paymentMethodRepository.findById(paymentMethodId).orElse(null);
         if (paymentMethod == null) throw new Exception("Payment method not found with id " + paymentMethodId);
         if (!paymentMethod.getIsValid()) throw new Exception("Payment method is not valid with id " + paymentMethodId);
-
-        // generate receipt number
-        Date date = new Date();
-        String receiptNo = date.getTime() + "";
 
         List<Receipt> res = new ArrayList<Receipt>();
         List<ReceiptDto.Products> products = receiptDto.getProducts();
@@ -83,12 +79,12 @@ public class ReceiptService {
             // save receipt
             Receipt receipt = new Receipt();
             receipt.setOrderNo(orderNo);
-            receipt.setReceiptNo(receiptNo);
+            receipt.setReceiptNo(receiptDto.getReceiptNo());
             receipt.setProduct(product1);
             receipt.setAmount(product.getAmount());
             receipt.setPrice(product1.getPriceAndStock().getPrice());
             receipt.setPaymentMethod(paymentMethod);
-            receipt.setAdmin(admin);
+            receipt.setUser(admin);
             receipt.setCreatedAt(new Date());
             Receipt receipt1 = receiptRepository.save(receipt);
             res.add(receipt1);

@@ -39,8 +39,8 @@ public class Orders {
     private PaymentMethod paymentMethod;
 
     @ManyToOne
-    @JoinColumn(name = "membership_id")
-    private Membership membership;
+    @JoinColumn(name = "user_id")
+    private User user;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     @CreationTimestamp

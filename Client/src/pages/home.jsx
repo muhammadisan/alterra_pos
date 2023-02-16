@@ -16,9 +16,10 @@ const Home = () => {
   const handlePrint = useReactToPrint({
     onBeforeGetContent: handleOnBeforeGetContent,
     content: () => componentRef.current,
-    onAfterPrint: () => handleClear
+    onAfterPrint: () => handleClear()
   });
-  const [orderNo, setOrderNo] = useState(new Date().getTime() + "");
+  const [orderNo, setOrderNo] = useState(null);
+  const [getOrderNo, setGetOrderNo] = useState("");
 
   useEffect(() => {
     async function doGetRequest() {
@@ -133,7 +134,7 @@ const Home = () => {
     setSubtotal(0);
     setDiscount(0);
     setTotal(0);
-    setOrderNo(new Date().getTime() + "");
+    setOrderNo(null);
   }
 
   function handleOnBeforeGetContent() {
@@ -141,6 +142,33 @@ const Home = () => {
     let products = [];
     for (let product of selectedProducts) products = [...products, { productId: product.id, amount: product.amount }];
     http.post(`/orders`, { orderNo, products, paymentMethodId }).then((res) => { console.log(res.data) })
+  }
+
+  function getOrders() {
+    if (getOrderNo.length != 13) return;
+
+    http.get(`/orders/orderNo/${getOrderNo}`).then((res) => {
+      setSelectedProducts([]);
+      setSubtotal(0);
+      setDiscount(0);
+      setTotal(0);
+      setPaymentMethodId(res.data[0].paymentMethod.id);
+      for (let data of res.data) {
+        console.log(data)
+        let product = {
+          id: data.product.id,
+          name: data.product.name,
+          amount: data.amount,
+          stock: data.product.priceAndStock.stock,
+          price: data.price
+        }
+        setSelectedProducts((prev) => [...prev, product]);
+        setSubtotal((prev) => prev + product.amount * product.price);
+        setTotal((prev) => prev + product.amount * product.price);
+      }
+    });
+
+    setOrderNo(new Date().getTime() + "");
   }
 
   function formatRupiah(angka, prefix) {
@@ -168,16 +196,15 @@ const Home = () => {
       <div className="w-full flex h-screen bg-base-300">
         <div className="flex-1">
           <div className="navbar h-[74px]">
-            <div className="flex-1">
-              <a className="btn btn-ghost normal-case text-xl">
-                R.M. Tidak Sederhana
-              </a>
+            <div className="flex-1 mr-[100px]">
+              <input type="text" placeholder="Check Order No" value={getOrderNo} onChange={(e) => setGetOrderNo(e.target.value)} className="input input-bordered w-full max-w-xs mr-2" />
+              <button className="btn btn-primary" onClick={getOrders}>Check</button>
             </div>
             <div className="flex-none gap-2">
               <div className="form-control">
                 <input
                   type="text"
-                  placeholder="Search"
+                  placeholder="Search Menu"
                   className="input input-bordered"
                 />
               </div>
@@ -248,7 +275,7 @@ const Home = () => {
             <div className="flex flex-row justify-between my-6 w-full">
               <h1 className="text-xl">Current Order</h1>
               <div>
-                <button className="btn btn-outline btn-error btn-sm" onClick={() => { handleClear }}>
+                <button className="btn btn-outline btn-error btn-sm" onClick={handleClear}>
                   Clear
                 </button>
               </div>
@@ -323,7 +350,7 @@ const Home = () => {
                   {dataPaymentMethod.map((payment) => {
                     return (
                       <div key={payment.id} className="col-span-1 flex flex-col">
-                        <div className="flex justify-center"><input type="radio" name="radio-5" className="radio radio-success" onClick={() => setPaymentMethodId(payment.id)} /></div>
+                        <div className="flex justify-center"><input type="radio" name="radio-5" className="radio radio-success" onClick={() => setPaymentMethodId(payment.id)} checked={payment.id === paymentMethodId} /></div>
                         <label className="flex justify-center">{payment.payment}</label>
                       </div>
                     )

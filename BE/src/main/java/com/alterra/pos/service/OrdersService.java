@@ -1,14 +1,8 @@
 package com.alterra.pos.service;
 
 import com.alterra.pos.dto.OrdersDto;
-import com.alterra.pos.entity.Orders;
-import com.alterra.pos.entity.PaymentMethod;
-import com.alterra.pos.entity.PriceAndStock;
-import com.alterra.pos.entity.Product;
-import com.alterra.pos.repository.OrdersRepository;
-import com.alterra.pos.repository.PaymentMethodRepository;
-import com.alterra.pos.repository.PriceAndStockRepository;
-import com.alterra.pos.repository.ProductRepository;
+import com.alterra.pos.entity.*;
+import com.alterra.pos.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class OrdersService {
@@ -27,6 +22,8 @@ public class OrdersService {
     private ProductRepository productRepository;
     @Autowired
     private PriceAndStockRepository priceAndStockRepository;
+    @Autowired
+    private UserRepository userRepository;
 
     public List<Orders> getOrders() {
         return ordersRepository.findAll();
@@ -47,6 +44,12 @@ public class OrdersService {
         String orderNo = ordersDto.getOrderNo();
         List<Orders> orders2 = ordersRepository.findAllByOrderNo(orderNo);
         if (orders2.size() != 0) throw new Exception("Orders already printed with Order No " + orderNo);
+
+        int userId = ordersDto.getUserId();
+        User user = userRepository.findById(userId).orElse(null);;
+        if (user == null) throw new Exception("User not found with id " + userId);
+        if (!user.getIsValid()) throw new Exception("User is not valid with id " + userId);
+        if (user.getRole().getRole() != "MEMBERSHIP") throw new Exception("Unauthorized");
 
         List<Orders> res = new ArrayList<Orders>();
         List<OrdersDto.Products> products = ordersDto.getProducts();
@@ -69,6 +72,7 @@ public class OrdersService {
             orders.setAmount(product.getAmount());
             orders.setPrice(product1.getPriceAndStock().getPrice());
             orders.setPaymentMethod(paymentMethod);
+            orders.setUser(user);
             orders.setCreatedAt(new Date());
             Orders orders1 = ordersRepository.save(orders);
             res.add(orders1);
