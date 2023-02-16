@@ -1,32 +1,27 @@
-package com.alterra.pos.controller;
+package com.alterra.pos.service;
 
 import com.alterra.pos.entity.PaymentMethod;
 import com.alterra.pos.repository.PaymentMethodRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
-@RestController
-@RequestMapping("paymentMethod")
-public class PaymentMethodController {
+@Service
+public class PaymentMethodService {
     @Autowired
     private PaymentMethodRepository paymentMethodRepository;
 
-    @GetMapping
     public List<PaymentMethod> getPaymentMethods() {
         return paymentMethodRepository.findAllByIsValidTrue();
     }
 
-    @GetMapping("/{id}")
-    public Optional<PaymentMethod> getPaymentMethodById(@PathVariable Integer id) {
+    public Optional<PaymentMethod> getPaymentMethodById(Integer id) {
         return paymentMethodRepository.findById(id);
     }
 
-    @PostMapping
-    public PaymentMethod addPaymentMethod(@Validated @RequestBody PaymentMethod paymentMethod) {
+    public PaymentMethod addPaymentMethod(PaymentMethod paymentMethod) {
         return paymentMethodRepository.save(paymentMethod);
     }
 }

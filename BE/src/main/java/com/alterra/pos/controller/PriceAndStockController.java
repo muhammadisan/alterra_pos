@@ -16,5 +16,7 @@ public class PriceAndStockController {
     PriceAndStockService priceAndStockService;
 
     @GetMapping
-    public List<PriceAndStock> getPriceAndStocks() { return priceAndStockService.getPriceAndStocks(); };
+    public List<PriceAndStock> getPriceAndStocks() {
+        return priceAndStockService.getPriceAndStocks();
+    };
 }

@@ -25,15 +25,13 @@ public class ProductService {
     @Autowired
     private PriceAndStockRepository priceAndStockRepository;
 
-    public ProductService(ProductRepository productRepository) {
-        this.productRepository = productRepository;
-    }
-
     public List<Product> getProducts() {
         return productRepository.findAllByIsValidTrue();
     }
 
-    public Optional<Product> getProductById(Integer id) { return productRepository.findById(id); }
+    public Optional<Product> getProductById(Integer id) {
+        return productRepository.findById(id);
+    }
 
     public List<Product> getProductsByCategoryId(Integer categoryId) {
         return productRepository.findAllByCategoryId(categoryId);

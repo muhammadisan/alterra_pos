@@ -1,7 +1,7 @@
 package com.alterra.pos.controller;
 
 import com.alterra.pos.entity.Category;
-import com.alterra.pos.repository.CategoryRepository;
+import com.alterra.pos.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -13,18 +13,20 @@ import java.util.Optional;
 @RequestMapping("categories")
 public class CategoryController {
     @Autowired
-    private CategoryRepository categoryRepository;
+    private CategoryService categoryService;
 
     @GetMapping
     public List<Category> getCategories() {
-        return categoryRepository.findAllByIsValidTrue();
+        return categoryService.getCategories();
     }
 
     @GetMapping("/{id}")
-    public Optional<Category> getCategoryById(@PathVariable Integer id) { return categoryRepository.findById(id); }
+    public Optional<Category> getCategoryById(@PathVariable Integer id) {
+        return categoryService.getCategoryById(id);
+    }
 
     @PostMapping
     public Category addCategory(@Validated @RequestBody Category category) {
-        return categoryRepository.save(category);
+        return categoryService.addCategory(category);
     }
 }

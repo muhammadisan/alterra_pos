@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,10 +16,14 @@ public class ProductController {
     ProductService productService;
 
     @GetMapping
-    public List<Product> getProducts() { return productService.getProducts(); }
+    public List<Product> getProducts() {
+        return productService.getProducts();
+    }
 
     @GetMapping("/{id}")
-    public Optional<Product> getProductById(@PathVariable Integer id) { return productService.getProductById(id); }
+    public Optional<Product> getProductById(@PathVariable Integer id) {
+        return productService.getProductById(id);
+    }
 
     @GetMapping("/category/{categoryId}")
     public List<Product> getProductsByCategoryId(@PathVariable Integer categoryId) {
