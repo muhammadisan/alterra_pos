@@ -1,14 +1,8 @@
 package com.alterra.pos.controller;
 
-import com.alterra.pos.entity.Category;
-import com.alterra.pos.entity.PriceAndStock;
 import com.alterra.pos.entity.Product;
-import com.alterra.pos.repository.CategoryRepository;
-import com.alterra.pos.repository.PriceAndStockRepository;
-import com.alterra.pos.repository.ProductRepository;
 import com.alterra.pos.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,15 +13,6 @@ import java.util.Optional;
 @RestController
 @RequestMapping("products")
 public class ProductController {
-    @Autowired
-    private ProductRepository productRepository;
-
-    @Autowired
-    private CategoryRepository categoryRepository;
-
-    @Autowired
-    private PriceAndStockRepository priceAndStockRepository;
-
     @Autowired
     ProductService productService;
 
@@ -43,13 +28,11 @@ public class ProductController {
     }
 
     @PostMapping("/{categoryId}")
-    @Transactional(rollbackFor = Exception.class)
     public Product addProduct(@PathVariable Integer categoryId, @Validated @RequestBody Product product) throws Exception {
         return productService.addProduct(categoryId, product);
     }
 
     @PutMapping
-    @Transactional(rollbackFor = Exception.class)
     public Product editProduct(@Validated @RequestBody Product product) throws Exception {
         return productService.editProduct(product);
     }

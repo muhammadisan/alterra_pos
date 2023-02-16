@@ -8,9 +8,7 @@ import com.alterra.pos.repository.PriceAndStockRepository;
 import com.alterra.pos.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
@@ -35,12 +33,13 @@ public class ProductService {
         return productRepository.findAllByIsValidTrue();
     }
 
-    public Optional<Product> getProductById(@PathVariable Integer id) { return productRepository.findById(id); }
+    public Optional<Product> getProductById(Integer id) { return productRepository.findById(id); }
 
-    public List<Product> getProductsByCategoryId(@PathVariable Integer categoryId) {
+    public List<Product> getProductsByCategoryId(Integer categoryId) {
         return productRepository.findAllByCategoryId(categoryId);
     }
 
+    @Transactional(rollbackFor = Exception.class)
     public Product addProduct(Integer categoryId, Product product) throws Exception {
         // validate
         Category category = categoryRepository.findById(categoryId).orElse(null);
@@ -54,8 +53,9 @@ public class ProductService {
 
         return productRepository.save(product);
     }
-
-    public Product editProduct(@Validated @RequestBody Product product) throws Exception {
+    
+    @Transactional(rollbackFor = Exception.class)
+    public Product editProduct(Product product) throws Exception {
         // validate
         int productId = product.getId();
         Product product1 = productRepository.findById(productId).orElse(null);
@@ -76,7 +76,8 @@ public class ProductService {
         return productRepository.save(product);
     }
 
-    public String deleteProduct(@PathVariable Integer productId) throws Exception {
+    @Transactional(rollbackFor = Exception.class)
+    public String deleteProduct(Integer productId) throws Exception {
         Product product = productRepository.findById(productId).orElse(null);
         if (product == null) throw new Exception("Product not found with id " + productId);
 
