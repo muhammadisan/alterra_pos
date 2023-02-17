@@ -49,7 +49,7 @@ public class OrdersService {
         User user = userRepository.findById(userId).orElse(null);;
         if (user == null) throw new Exception("User not found with id " + userId);
         if (!user.getIsValid()) throw new Exception("User is not valid with id " + userId);
-        if (user.getRole().getRole() != "MEMBERSHIP") throw new Exception("Unauthorized");
+        if (user.getRole().name() != "MEMBERSHIP") throw new Exception("Unauthorized");
 
         List<Orders> res = new ArrayList<Orders>();
         List<OrdersDto.Products> products = ordersDto.getProducts();

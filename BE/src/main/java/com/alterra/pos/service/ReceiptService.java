@@ -43,7 +43,7 @@ public class ReceiptService {
         // validasi
         int adminId = receiptDto.getUserId();
         User admin = userRepository.findById(adminId).get();
-        if (admin == null || !admin.getIsValid() || admin.getRole().getRole() != "ADMIN") throw new Exception("Unauthorized");
+        if (admin == null || !admin.getIsValid() || admin.getRole().name() != "ADMIN") throw new Exception("Unauthorized");
 
         String orderNo = receiptDto.getOrderNo();
         List<Orders> orders = ordersRepository.findAllByOrderNo(orderNo);
