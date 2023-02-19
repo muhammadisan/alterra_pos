@@ -1,6 +1,7 @@
 package com.alterra.pos.controller;
 
 import com.alterra.pos.dto.OrdersDto;
+import com.alterra.pos.dto.ResponseDto;
 import com.alterra.pos.entity.*;
 import com.alterra.pos.service.OrdersService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +27,7 @@ public class OrdersController {
     }
 
     @PostMapping
-    public List<Orders> addOrders(@Validated @RequestBody OrdersDto ordersDto) throws Exception {
+    public ResponseDto addOrders(@Validated @RequestBody OrdersDto ordersDto) {
         return ordersService.addOrders(ordersDto);
     }
 }

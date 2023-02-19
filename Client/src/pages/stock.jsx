@@ -242,38 +242,6 @@ export default function Stock() {
                         <Button variant="contained" sx={{ float: "right" }} onClick={addNewStock} color="success">ADD</Button>
                     </Box>
                 </Modal>
-
-                <Modal
-                    open={modalAddShow}
-                    onClose={() => setModalAddShow(false)}
-                    aria-labelledby="modal-modal-title"
-                    aria-describedby="modal-modal-description"
-                >
-                    <Box sx={style}>
-                        <div style={{ textAlign: "center", fontSize: "20px" }}>New Product</div>
-                        <FormControl variant="filled" sx={{ m: 1, minWidth: 120, display: "flex" }}>
-                            <InputLabel id="select-category-label">Category</InputLabel>
-                            <Select
-                                style={{ margin: "10px" }}
-                                labelId="select-category-label"
-                                id="select-category"
-                                value={newCategoryId}
-                                onChange={(e) => setNewCategoryId(e.target.value)}
-                            >
-                                {categories.map((category) => {
-                                    return (<MenuItem key={category.id} value={category.id}>{category.name}</MenuItem>)
-                                })}
-                            </Select>
-                            <TextField style={{ margin: "10px" }} onChange={handleChange} value={newStock.name} name="name" label="Name" variant="filled" />
-                            <TextField style={{ margin: "10px" }} onChange={handleChange} value={newStock.description} name="description" label="Description" variant="filled" multiline rows={2} />
-                            <div style={{ display: "flex" }}>
-                                <div><TextField style={{ margin: "10px" }} onChange={handleChange} value={newStock.priceAndStock.price} name="price" label="Price" variant="filled" type="number" /></div>
-                                <div><TextField style={{ margin: "10px" }} onChange={handleChange} value={newStock.priceAndStock.stock} name="stock" label="Stock" variant="filled" type="number" /></div>
-                            </div>
-                        </FormControl>
-                        <Button variant="contained" sx={{ float: "right" }} onClick={addNewStock} color="success">ADD</Button>
-                    </Box>
-                </Modal>
             </div>
         </>
     );
