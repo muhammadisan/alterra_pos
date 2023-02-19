@@ -24,17 +24,18 @@ const OrdersInvoice = React.forwardRef((props, ref) => {
       <center id="top">
         <div className="logo" />
         <div className="info">
-          <h2>R.M. Tidak Sederhana</h2>
+          <h2>Alterra Resto</h2>
         </div>
       </center>
       <div id="mid">
         <div className="info">
-          {/* <h2>Contact Info</h2> */}
-          <p>
-            Order No. : <span style={{ fontWeight: "bold" }}>{props.orderNo == null ? "Error!" : props.orderNo}</span><br />
-            {/* Date   : {new Date() + ""}<br /> */}
-            {/* Phone   : 555-555-5555<br /> */}
-          </p>
+          {props.userRole == "ROLE_ADMIN"
+            ? <p>
+              Receipt No. : <span style={{ fontWeight: "bold" }}>{props.receiptNo == null ? "Error!" : props.receiptNo}</span><br />
+            </p>
+            : <p>
+              Order No. : <span style={{ fontWeight: "bold" }}>{props.orderNo == null ? "Error!" : props.orderNo}</span><br />
+            </p>}
         </div>
       </div>
       <div id="bot">
@@ -70,7 +71,10 @@ const OrdersInvoice = React.forwardRef((props, ref) => {
             </tbody></table>
         </div>
         <div id="legalcopy">
-          <p className="legal" style={{ fontSize: "10px" }}><strong>Thank you for your order!</strong><br />Give this invoice to the cashier to process your order
+          <p className="legal" style={{ fontSize: "10px" }}><strong>Thank you for your order!</strong>
+            {props.userRole == "ROLE_ADMIN"
+              ? ""
+              : <span><br />Give this invoice to the cashier to process your order</span>}
           </p>
         </div>
       </div>
