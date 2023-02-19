@@ -45,6 +45,7 @@ class PosApplicationTests {
 				.isValid(true).createdBy("system").createdAt(new Date())
 				.modifiedBy("system").modifiedAt(new Date()).build();
 	}
+
 	@Test
 	public void givenProductsList_whenGetAllProducts_thenReturnProductsList() {
 		// given
@@ -57,4 +58,6 @@ class PosApplicationTests {
 		assertThat(productsList).isNotNull();
 		assertThat(productsList.size()).isEqualTo(1);
 	}
+
+
 }

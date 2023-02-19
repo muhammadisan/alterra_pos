@@ -6,7 +6,7 @@ import { BsFillPersonFill } from "react-icons/bs";
 import { BiBox } from "react-icons/bi";
 import { Link } from "react-router-dom";
 
-const Sidebar = ({ children }) => {
+const Sidebar = () => {
   const menus = [
     { name: "Home", link: "/home", icon: AiOutlineHome },
     { name: "Dashboard", link: "/dashboard", icon: MdOutlineDashboard },
