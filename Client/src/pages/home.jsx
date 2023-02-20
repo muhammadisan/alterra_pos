@@ -18,17 +18,12 @@ const Home = () => {
   const [userRole, setUserRole] = useState("");
   const [paymentMethodId, setPaymentMethodId] = useState(null);
   const componentRef = useRef();
-  const handlePrint = useReactToPrint({
-    onBeforeGetContent: handleOnBeforeGetContent,
-    content: () => componentRef.current
-  });
-  const [orderNo, setOrderNo] = useState(null);
-  const [receiptNo, setReceiptNo] = useState(null);
   const [getOrderNo, setGetOrderNo] = useState("");
+  const [tempOrderNo, setTempOrderNo] = useState("");
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (user.isLoggedIn) setUserRole(user.user.role);
-    console.log(userRole);
     async function doGetRequest() {
       let res = await http.get(`/products`);
       let dataFood = res.data;
@@ -39,7 +34,7 @@ const Home = () => {
     }
 
     doGetRequest();
-  }, []);
+  }, [user]);
 
   function addProduct(product) { // ADD button
     let amount = 0;
@@ -84,9 +79,6 @@ const Home = () => {
         return item;
       })
     );
-
-    setOrderNo(new Date().getTime() + "");
-    setReceiptNo(new Date().getTime() + "");
   }
 
   function reduceStock(product) { // (-) button
@@ -107,8 +99,6 @@ const Home = () => {
     });
     setSubtotal((prev) => prev - product.price);
     setTotal((prev) => prev - product.price);
-    setOrderNo(new Date().getTime() + "");
-    setReceiptNo(new Date().getTime() + "");
   }
 
   function addStock(product) { // (+) button
@@ -134,8 +124,6 @@ const Home = () => {
     });
     setSubtotal((prev) => prev + product.price);
     setTotal((prev) => prev + product.price);
-    setOrderNo(new Date().getTime() + "");
-    setReceiptNo(new Date().getTime() + "");
   }
 
   function handleClear() {
@@ -143,11 +131,10 @@ const Home = () => {
     setSubtotal(0);
     setDiscount(0);
     setTotal(0);
-    setOrderNo(null);
-    setReceiptNo(null);
+    setPaymentMethodId(null);
   }
 
-  function handleOnBeforeGetContent() {
+  function handlePrint() {
     if (!user.isLoggedIn) {
       alert.error("You're not logged in");
       return;
@@ -165,24 +152,42 @@ const Home = () => {
     for (let product of selectedProducts) products = [...products, { productId: product.id, amount: product.amount }];
 
     if (user.user.role == "ROLE_MEMBERSHIP") {
-      http.post(`/orders`, { orderNo, products, paymentMethodId, userId: user.user.id }).then((res) => {
-        if (res.data.success) {
+      setLoading(true);
+      http.post(`/orders`, { products, paymentMethodId, userId: user.user.id }, { responseType: 'blob' }).then((res) => {
+        if (res.headers["content-type"] == "application/pdf") {
           alert.success("Success create order");
           handleClear();
+
+          let fileURL = window.URL.createObjectURL(new Blob([res.data], { type: 'application/pdf' }))
+          let fileLink = document.createElement('a')
+
+          fileLink.href = fileURL
+          fileLink.setAttribute('download', 'order')
+          document.body.appendChild(fileLink)
+          fileLink.click();
         } else {
           alert.error(res.data.message);
         }
-        console.log(res.data)
+        setLoading(false);
       })
     } else if (user.user.role == "ROLE_ADMIN") {
-      http.post(`/receipts`, { orderNo: getOrderNo, receiptNo, products, paymentMethodId, userId: user.user.id }).then((res) => {
-        if (res.data.success) {
+      setLoading(true);
+      http.post(`/receipts`, { orderNo: tempOrderNo, products, paymentMethodId, userId: user.user.id }, { responseType: 'blob' }).then((res) => {
+        if (res.headers["content-type"] == "application/pdf") {
           alert.success("Success create receipt");
           handleClear();
+
+          let fileURL = window.URL.createObjectURL(new Blob([res.data], { type: 'application/pdf' }))
+          let fileLink = document.createElement('a')
+
+          fileLink.href = fileURL
+          fileLink.setAttribute('download', 'receipt')
+          document.body.appendChild(fileLink)
+          fileLink.click();
         } else {
           alert.error(res.data.message);
         }
-        console.log(res.data)
+        setLoading(false);
       })
     }
   }
@@ -193,36 +198,34 @@ const Home = () => {
       return;
     }
 
+    setLoading(true);
+    setTempOrderNo(getOrderNo);
     http.get(`/orders/orderNo/${getOrderNo}`).then((res) => {
       if (res.data.length == 0) {
-        alert.error("Invalid Order No");
-        return;
-      }
+        alert.error("Order No not fond");
+      } else {
+        setSelectedProducts([]);
+        setSubtotal(0);
+        setDiscount(0);
+        setTotal(0);
+        setPaymentMethodId(res.data[0].paymentMethod.id);
 
-      console.log(res.data);
-
-      setSelectedProducts([]);
-      setSubtotal(0);
-      setDiscount(0);
-      setTotal(0);
-      setPaymentMethodId(res.data[0].paymentMethod.id);
-
-      for (let data of res.data) {
-        let product = {
-          id: data.product.id,
-          name: data.product.name,
-          amount: data.amount,
-          stock: data.product.priceAndStock.stock,
-          price: data.price
+        for (let data of res.data) {
+          let product = {
+            id: data.product.id,
+            name: data.product.name,
+            amount: data.amount,
+            stock: data.product.priceAndStock.stock,
+            price: data.price
+          }
+          setSelectedProducts((prev) => [...prev, product]);
+          setSubtotal((prev) => prev + product.amount * product.price);
+          setTotal((prev) => prev + product.amount * product.price);
         }
-        setSelectedProducts((prev) => [...prev, product]);
-        setSubtotal((prev) => prev + product.amount * product.price);
-        setTotal((prev) => prev + product.amount * product.price);
+
+        alert.success("Success get orders");
       }
-
-      alert.success("Success get orders");
-
-      setReceiptNo(new Date().getTime() + "");
+      setLoading(false);
     });
   }
 
@@ -245,16 +248,12 @@ const Home = () => {
 
   return (
     <>
-      <div style={{ display: "none" }}>
-        <OrdersInvoice data={selectedProducts} subtotal={subtotal} discount={discount} total={total} orderNo={orderNo} receiptNo={receiptNo} userRole={userRole} ref={componentRef} />
-      </div>
-
       <div className="w-full flex h-full bg-base-300">
         <div className="flex-1 h-full">
           <div className={`navbar h-[74px] ${user.isLoggedIn && user.user.role == "ROLE_ADMIN" ? "" : "hidden"}`}>
             <div className={`flex-1 mr-[100px]`}>
               <input type="text" placeholder="Check Order No" value={getOrderNo} onChange={(e) => setGetOrderNo(e.target.value)} className="input input-bordered w-100 max-w-xs mr-2" />
-              <button className="btn btn-success btn-outline" onClick={getOrders}>Check</button>
+              <button className={`btn btn-success btn-outline ${loading ? "loading" : ""}`} onClick={getOrders}>Check</button>
             </div>
           </div>
           <div className="h-full">
@@ -381,7 +380,7 @@ const Home = () => {
               </div>
             </div>
 
-            <div className="w-full flex justify-end mb-2"><button className="w-full btn btn-success btn-outline" onClick={handlePrint}>Print {user.isLoggedIn && user.user.role == "ROLE_ADMIN" ? "Receipt" : "Order"}</button></div>
+            <div className="w-full flex justify-end mb-2"><button className={`w-full btn btn-success btn-outline ${loading ? 'loading' : ''}`} onClick={handlePrint}>Print {user.isLoggedIn && user.user.role == "ROLE_ADMIN" ? "Receipt" : "Order"}</button></div>
           </div>
         </div>
       </div>

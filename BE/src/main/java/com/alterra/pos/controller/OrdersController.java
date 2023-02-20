@@ -5,9 +5,11 @@ import com.alterra.pos.dto.ResponseDto;
 import com.alterra.pos.entity.*;
 import com.alterra.pos.service.OrdersService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.ByteArrayOutputStream;
 import java.util.List;
 
 @RestController
@@ -27,7 +29,7 @@ public class OrdersController {
     }
 
     @PostMapping
-    public ResponseDto addOrders(@Validated @RequestBody OrdersDto ordersDto) {
+    public ResponseEntity<?> addOrders(@Validated @RequestBody OrdersDto ordersDto) {
         return ordersService.addOrders(ordersDto);
     }
 }

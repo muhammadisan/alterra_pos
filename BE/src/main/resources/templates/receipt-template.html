@@ -1,0 +1,108 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <title>Template</title>
+        <style type="text/css">
+            * {
+                font-size: 12px;
+                font-family: 'Times New Roman';
+            }
+
+            td.description,
+            th.description {
+                width: 100px;
+                max-width: 100px;
+            }
+
+            td.quantity,
+            th.quantity {
+                width: 40px;
+                max-width: 40px;
+                word-break: break-all;
+            }
+
+            td.price,
+            th.price {
+                width: 70px;
+                max-width: 70px;
+                word-break: break-all;
+            }
+
+            .centered {
+                text-align: center;
+                align-content: center;
+            }
+
+            .ticket {
+                width: 280px;
+                max-width: 280px;
+            }
+
+            img {
+                max-width: inherit;
+                width: inherit;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="ticket">
+            <p class="centered" style="color: gray">Alterra Resto
+                <br/>Jl. Raya Tidar No. 23, Kota Malang
+                <br/><span th:text="${invoiceDate}"/>
+            </p>
+            <div style="border-top: 1px solid gray; border-bottom: 1px solid gray; color: gray">Receipt No: <span th:text="${data[0].receiptNo}"/></div>
+            <table style="border-bottom: 1px solid gray">
+                <thead>
+                    <tr>
+                        <th class="description">Desc.</th>
+                        <th class="quantity">Qty</th>
+                        <th class="price"></th>
+                        <th class="price">Rp</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="receipt: ${data}">
+                        <td th:text="${receipt.product.name}" class="description"/>
+                        <td th:text="${receipt.amount}" class="quantity"/>
+                        <td th:text="${receipt.price}" class="price"/>
+                        <td th:text="${receipt.amount * order.price}" class="price"/>
+                    </tr>
+                </tbody>
+            </table>
+            <table style="border-bottom: 1px solid gray">
+                <thead>
+                    <tr>
+                        <th class="description"></th>
+                        <th class="quantity"></th>
+                        <th class="price"></th>
+                        <th class="price"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td/>
+                        <td/>
+                        <td>Subtotal</td>
+                        <td th:text="${subtotal}"/>
+                    </tr>
+                    <tr>
+                        <td/>
+                        <td/>
+                        <td>Discount</td>
+                        <td th:text="${discount}"/>
+                    </tr>
+                    <tr>
+                        <td/>
+                        <td/>
+                        <td>Total</td>
+                        <td th:text="${total}"/>
+                    </tr>
+                </tbody>
+            </table>
+            <p class="centered" style="color: gray">Thanks for your purchase!</p>
+            <p class="centered" style="color: gray; font-size: 9px !important">This is valid receipt</p>
+        </div>
+    </body>
+</html>

@@ -5,6 +5,7 @@ import com.alterra.pos.dto.ResponseDto;
 import com.alterra.pos.entity.*;
 import com.alterra.pos.service.ReceiptService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,7 +33,7 @@ public class ReceiptController {
     }
 
     @PostMapping
-    public ResponseDto addReceipt(@Validated @RequestBody ReceiptDto receiptDto) {
+    public ResponseEntity<?> addReceipt(@Validated @RequestBody ReceiptDto receiptDto) {
         return receiptService.addReceipt(receiptDto);
     }
 }
