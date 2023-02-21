@@ -10,6 +10,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("receipts")
@@ -18,7 +19,7 @@ public class ReceiptController {
     ReceiptService receiptService;
 
     @GetMapping
-    public List<Receipt> getReceipts() {
+    public List<Map> getReceipts() {
         return receiptService.getReceipts();
     }
 

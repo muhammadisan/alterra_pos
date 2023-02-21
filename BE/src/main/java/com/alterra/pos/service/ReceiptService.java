@@ -19,9 +19,7 @@ import java.io.*;
 import java.nio.file.FileSystems;
 import java.text.Format;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class ReceiptService {
@@ -40,8 +38,27 @@ public class ReceiptService {
     @Autowired
     SpringTemplateEngine templateEngine;
 
-    public List<Receipt> getReceipts() {
-        return receiptRepository.findAll();
+//    public List<Receipt> getReceipts() {
+//        return receiptRepository.findAll();
+//    }
+
+    public List<Map> getReceipts() {
+        List<List<Object>> receipts = receiptRepository.findAllGroupByReceiptNo();
+        List<Map> response = new ArrayList<Map>();
+        for (List<Object> receipt: receipts) {
+            Map map = new HashMap();
+            map.put("id", receipt.get(0));
+            map.put("orderNo", receipt.get(1));
+            map.put("receiptNo", receipt.get(2));
+            map.put("paymentMethodId", receipt.get(3));
+            map.put("paymentMethod", receipt.get(4));
+            map.put("userId", receipt.get(5));
+            map.put("username", receipt.get(6));
+            map.put("createdAt", receipt.get(7));
+
+            response.add(map);
+        }
+        return response;
     }
 
     public List<Receipt> getReceiptsByOrderNo(String orderNo) {

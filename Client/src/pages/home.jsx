@@ -2,8 +2,6 @@ import React, { useEffect, useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import http from "../http"
 import { BiPlus, BiMinus } from "react-icons/bi";
-import OrdersInvoice from "../components/OrdersInvoice";
-import { useReactToPrint } from "react-to-print";
 import { useAlert } from "react-alert";
 
 const Home = () => {
@@ -204,6 +202,7 @@ const Home = () => {
       if (res.data.length == 0) {
         alert.error("Order No not fond");
       } else {
+        console.log(res.data)
         setSelectedProducts([]);
         setSubtotal(0);
         setDiscount(0);

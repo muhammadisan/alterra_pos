@@ -9,6 +9,11 @@ import java.util.List;
 
 @Repository
 public interface OrdersRepository extends JpaRepository<Orders, Integer> {
+    @Query("SELECT MIN(o.id), o.orderNo, o.paymentMethod.id, o.paymentMethod.payment, o.user.id, o.user.name, MAX(o.createdAt)" +
+            " FROM Orders AS o" +
+            " GROUP BY o.orderNo, o.paymentMethod.id, o.paymentMethod.payment, o.user.id, o.user.name")
+    List<List<Object>> findAllGroupByOrderNo();
+
     @Query("SELECT o from Orders o WHERE o.orderNo = ?1")
     List<Orders> findAllByOrderNo(String OrderNo);
 }

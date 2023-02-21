@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.ByteArrayOutputStream;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("orders")
@@ -19,7 +20,7 @@ public class OrdersController {
     private OrdersService ordersService;
 
     @GetMapping
-    public List<Orders> getOrders() {
+    public List<Map> getOrders() {
         return ordersService.getOrders();
     }
 

@@ -2,7 +2,6 @@ import React, { useMemo } from "react";
 import { useState } from "react";
 import { useEffect } from "react";
 import http from "../http";
-import axios from "axios";
 
 const Order = () => {
   const [data, setData] = useState([]);
@@ -18,9 +17,9 @@ const Order = () => {
     }
   };
 
-  const getProducts = async () => {
+  const getReceipts = async () => {
     try {
-      const response = await http.get(`/products`);
+      const response = await http.get(`/receipts`);
       return response.data;
     } catch (err) {
       return err;
@@ -29,9 +28,17 @@ const Order = () => {
 
   const getAll = async () => {
     const orders = await getOrders();
-    await getProducts();
+    const receipts = await getReceipts();
+    
+    let setReceipts = new Set();
+    for (let receipt of receipts) setReceipts.add(receipt.orderNo);
 
-    setData(orders.length ? orders : []);
+    let selectedOrders = [];
+    for (let order of orders) if (!setReceipts.has(order.orderNo)) selectedOrders.push(order);
+
+    let data = [...receipts, ...selectedOrders];
+    data.sort((a, b) => { return b.createdAt - a.createdAt });
+    setData(data);
   };
 
   const handleFilterOrder = (event) => setFilterValue(event.target.value);
@@ -41,6 +48,10 @@ const Order = () => {
     [filterValue, data]
   );
 
+  const formatDate = (date) => {
+    let tanggal = new Date(date);
+    return tanggal.toLocaleString();
+  }
   useEffect(() => {
     getAll();
   }, []);
@@ -79,25 +90,25 @@ const Order = () => {
                     scope="col"
                     className="px-5 py-3 text-sm font-normal text-left text-gray-800 bg-white border-b border-gray-200"
                   >
-                    Order Name
+                    Receipt No
                   </th>
                   <th
                     scope="col"
                     className="px-5 py-3 text-sm font-normal text-left text-gray-800 bg-white border-b border-gray-200"
                   >
-                    Amount
+                    Payment
                   </th>
                   <th
                     scope="col"
                     className="px-5 py-3 text-sm font-normal text-left text-gray-800  bg-white border-b border-gray-200"
                   >
-                    Price
+                    Username
                   </th>
                   <th
                     scope="col"
                     className="px-5 py-3 text-sm font-normal text-left text-gray-800  bg-white border-b border-gray-200"
                   >
-                    Role
+                    Modified At
                   </th>
                 </tr>
               </thead>
@@ -106,10 +117,10 @@ const Order = () => {
                   return (
                     <tr key={res.id}>
                       <td className="py-4 px-6 ">{res.orderNo}</td>
-                      <td className="py-4 px-6 ">{res.product.name}</td>
-                      <td className="py-4 px-6 ">{res.amount}</td>
-                      <td className="py-4 px-6 ">{res.price}</td>
-                      <td className="py-4 px-6 ">{res.user.name}</td>
+                      <td className="py-4 px-6 ">{res.receiptNo}</td>
+                      <td className="py-4 px-6 ">{res.paymentMethod}</td>
+                      <td className="py-4 px-6 ">{res.username}</td>
+                      <td className="py-4 px-6 ">{formatDate(res.createdAt)}</td>
                       {/* <td className="py-4 px-6 ">{res.createdAt}</td> */}
                     </tr>
                   );

@@ -9,10 +9,10 @@ import { Link } from "react-router-dom";
 const Sidebar = () => {
   const menus = [
     { name: "Home", link: "/home", icon: AiOutlineHome },
-    { name: "Dashboard", link: "/dashboard", icon: MdOutlineDashboard },
+    // { name: "Dashboard", link: "/dashboard", icon: MdOutlineDashboard },
     { name: "Order", link: "/order", icon: MdAddShoppingCart },
     { name: "Stock", link: "/stock", icon: BiBox },
-    { name: "Member", link: "/member", icon: BsFillPersonFill },
+    // { name: "Member", link: "/member", icon: BsFillPersonFill },
   ];
   const [open, setOpen] = useState(true);
   return (

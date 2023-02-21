@@ -21,9 +21,7 @@ import java.io.*;
 import java.nio.file.FileSystems;
 import java.text.Format;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class OrdersService {
@@ -40,8 +38,24 @@ public class OrdersService {
     @Autowired
     SpringTemplateEngine templateEngine;
 
-    public List<Orders> getOrders() {
-        return ordersRepository.findAll();
+    public List<Map> getOrders() {
+        List<List<Object>> orders = ordersRepository.findAllGroupByOrderNo();
+        List<Map> response = new ArrayList<Map>();
+        for (List<Object> order : orders) {
+            Map map = new HashMap();
+            map.put("id", order.get(0));
+            map.put("orderNo", order.get(1));
+            map.put("receiptNo", "");
+            map.put("paymentMethodId", order.get(2));
+            map.put("paymentMethod", order.get(3));
+            map.put("userId", order.get(4));
+            map.put("username", order.get(5));
+            map.put("createdAt", order.get(6));
+
+            response.add(map);
+        }
+        return response;
+        // return ordersRepository.findAll();
     }
 
     public List<Orders> getOrdersByOrderNo(String orderNo) {
@@ -56,10 +70,12 @@ public class OrdersService {
             PaymentMethod paymentMethod = paymentMethodRepository.findById(paymentMethodId).orElse(null);
             if (paymentMethod == null)
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .body(ResponseDto.builder().success(false).message("Payment method not found with id " + paymentMethodId).build());
+                        .body(ResponseDto.builder().success(false)
+                                .message("Payment method not found with id " + paymentMethodId).build());
             if (!paymentMethod.getIsValid())
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .body(ResponseDto.builder().success(false).message("Payment method is not valid with id " + paymentMethodId).build());
+                        .body(ResponseDto.builder().success(false)
+                                .message("Payment method is not valid with id " + paymentMethodId).build());
 
             int userId = ordersDto.getUserId();
             User user = userRepository.findById(userId).orElse(null);
@@ -69,7 +85,8 @@ public class OrdersService {
                         .body(ResponseDto.builder().success(false).message("User not found with id " + userId).build());
             if (!user.getIsValid())
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .body(ResponseDto.builder().success(false).message("User is not valid with id " + userId).build());
+                        .body(ResponseDto.builder().success(false).message("User is not valid with id " + userId)
+                                .build());
             if (user.getRole().name() != "ROLE_MEMBERSHIP")
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                         .body(ResponseDto.builder().success(false).message("Unauthorized").build());
@@ -93,18 +110,23 @@ public class OrdersService {
                 Product product1 = productRepository.findById(productId).orElse(null);
                 if (product1 == null)
                     return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                            .body(ResponseDto.builder().success(false).message("Product not found with id " + productId).build());
+                            .body(ResponseDto.builder().success(false).message("Product not found with id " + productId)
+                                    .build());
                 if (!product1.getIsValid())
                     return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .body(ResponseDto.builder().success(false).message("Product is not valid with id " + productId).build());
+                            .body(ResponseDto.builder().success(false)
+                                    .message("Product is not valid with id " + productId).build());
 
-                PriceAndStock priceAndStock = priceAndStockRepository.findById(product1.getPriceAndStock().getId()).orElse(null);
+                PriceAndStock priceAndStock = priceAndStockRepository.findById(product1.getPriceAndStock().getId())
+                        .orElse(null);
                 if (priceAndStock == null)
                     return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .body(ResponseDto.builder().success(false).message("Product price not found with id " + productId).build());
+                            .body(ResponseDto.builder().success(false)
+                                    .message("Product price not found with id " + productId).build());
                 if (priceAndStock.getStock() < amount)
                     return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .body(ResponseDto.builder().success(false).message("Insufficient stocks with id " + productId).build());
+                            .body(ResponseDto.builder().success(false)
+                                    .message("Insufficient stocks with id " + productId).build());
 
                 // save
                 Orders orders = new Orders();
@@ -135,7 +157,7 @@ public class OrdersService {
 
             String baseUrl = FileSystems
                     .getDefault()
-                    .getPath("src", "main", "resources","templates")
+                    .getPath("src", "main", "resources", "templates")
                     .toUri()
                     .toURL()
                     .toString();
