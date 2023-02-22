@@ -1,19 +1,27 @@
 import React, { useState } from "react";
 import { HiMenuAlt3 } from "react-icons/hi";
-import { MdOutlineDashboard, MdAddShoppingCart } from "react-icons/md";
+import { MdAddShoppingCart } from "react-icons/md";
 import { AiOutlineHome } from "react-icons/ai";
-import { BsFillPersonFill } from "react-icons/bs";
 import { BiBox } from "react-icons/bi";
 import { Link } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 
 const Sidebar = () => {
-  const menus = [
-    { name: "Home", link: "/home", icon: AiOutlineHome },
-    // { name: "Dashboard", link: "/dashboard", icon: MdOutlineDashboard },
-    { name: "Order", link: "/order", icon: MdAddShoppingCart },
-    { name: "Stock", link: "/stock", icon: BiBox },
-    // { name: "Member", link: "/member", icon: BsFillPersonFill },
-  ];
+  const user = useSelector(state => state.auth);
+
+  let menus = []
+  if (user.isLoggedIn) {
+    if (user.user.role == "ROLE_ADMIN") {
+      menus = [
+        { name: "Home", link: "/home", icon: AiOutlineHome },
+        // { name: "Dashboard", link: "/dashboard", icon: MdOutlineDashboard },
+        { name: "Order", link: "/order", icon: MdAddShoppingCart },
+        { name: "Stock", link: "/stock", icon: BiBox },
+        // { name: "Member", link: "/member", icon: BsFillPersonFill },
+      ];
+    }
+  }
+
   const [open, setOpen] = useState(true);
   return (
     <div

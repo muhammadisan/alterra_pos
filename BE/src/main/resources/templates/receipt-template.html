@@ -67,7 +67,7 @@
                         <td th:text="${receipt.product.name}" class="description"/>
                         <td th:text="${receipt.amount}" class="quantity"/>
                         <td th:text="${receipt.price}" class="price"/>
-                        <td th:text="${receipt.amount * order.price}" class="price"/>
+                        <td th:text="${receipt.amount * receipt.price}" class="price"/>
                     </tr>
                 </tbody>
             </table>

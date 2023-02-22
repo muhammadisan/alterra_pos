@@ -174,15 +174,12 @@ public class ReceiptService {
                     .toUri()
                     .toURL()
                     .toString();
+                    
             renderer.setDocumentFromString(xHtml, baseUrl);
             renderer.layout();
 
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-
-            OutputStream outputStream = new FileOutputStream("src//invoice.pdf");
-            renderer.createPDF(outputStream);
             renderer.createPDF(baos);
-            outputStream.close();
             baos.close();
 
             return ResponseEntity
