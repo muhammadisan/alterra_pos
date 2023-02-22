@@ -20,6 +20,8 @@ public class CategoryController {
         return categoryService.getCategories();
     }
 
+    @GetMapping("/hello")
+    public String hello() { return "anjay mabar"; }
     @GetMapping("/{id}")
     public Optional<Category> getCategoryById(@PathVariable Integer id) {
         return categoryService.getCategoryById(id);
