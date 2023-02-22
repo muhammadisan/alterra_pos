@@ -1,12 +1,8 @@
-name: DigitalOcean App workflow
+name: AWS Deployment
 
 on:
   push:
     branches: [ main ]
-
-env:
-  REGISTRY: "registry.digitalocean.com/spring-boot-alterra-pos-registry"
-  IMAGE_NAME: "alterra-pos"
 
 defaults:
   run:
@@ -32,58 +28,38 @@ jobs:
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
             ${{ runner.os }}-maven-
-
-#       - name: Config github
-#         run: |
-#           git config --global user.email "muhammadisan2015@gmail.com"
-#           git config --global user.name "muhammadisan"
           
       - name: Change mvnw permission
         run: chmod +x ./mvnw
-          
-      - name: Maven Package
-        run: ./mvnw clean package
 
-      - name: Build docker image
-        run: docker build . -t $(echo $REGISTRY)/$(echo $IMAGE_NAME):$(echo $GITHUB_SHA | head -c7)
+      - name: Maven install
+        run: ./mvnw clean install
 
-      - name: Install doctl
-        uses: digitalocean/action-doctl@v2
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
         with:
-          token: ${{ secrets.DO_TOKEN }}
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Log in to DigitalOcean Container Registry with short-lived credentials
-        run: doctl registry login --expiry-seconds 600
-
-      - name: Push image to DigitalOcean Container Registry
-        run: docker push $(echo $REGISTRY)/$(echo $IMAGE_NAME):$(echo $GITHUB_SHA | head -c7)
-
-  deploy_to_digitalocean:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Code Checkout
-        uses: actions/checkout@v2
-
-      - name: Set up JDK 17
-        uses: actions/setup-java@v2
+      - name: Build and push
+        uses: docker/build-push-action@v3
         with:
-          java-version: '17'
-          distribution: 'adopt'
-
-      - name: Set env
-        run: echo "GITHUB_SHA_SHORT=$(echo $GITHUB_SHA | head -c7)" >> $GITHUB_ENV
-
-      - name: Deploy to Digital Ocean App Platform
-        env:
-          ENVIRONMENT: dev
-          DO_TOKEN: ${{ secrets.DO_TOKEN }}
-          DOCKER_TAG: ${{ env.GITHUB_SHA_SHORT }}
-        run: |
-          set -e
-          apt-get update && apt-get install jq bash -y
-          curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
-          sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
-          sudo apt-get update && sudo apt-get install terraform
-          
-          chmod +x ./terraform/deploy.sh
-          ./terraform/deploy.sh
+          context: ./BE
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/alterra-pos:latest
+      
+      - name: Docker
+        uses: appleboy/ssh-action@v0.1.7
+        with:
+          host: ${{ secrets.AWS_HOST }}
+          username: ${{ secrets.AWS_USERNAME }}
+          key: ${{ secrets.AWS_KEY }}
+          port: ${{ secrets.AWS_PORT }}
+          script: |
+            sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/alterra-pos:latest
+            sudo docker stop alterra-service
+            sudo docker rm alterra-service
+            sudo docker run -d -p 8080:8080 --name alterra-service ${{ secrets.DOCKERHUB_USERNAME }}/alterra-pos:latest
