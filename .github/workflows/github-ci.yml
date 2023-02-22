@@ -1,13 +1,9 @@
-name: DigitalOcean App workflow
+name: AWS Deployment
 
 on:
   push:
     branches: [ main ]
-
-env:
-  REGISTRY: "registry.digitalocean.com/spring-boot-alterra-pos-registry"
-  IMAGE_NAME: "alterra-pos"
-
+    
 defaults:
   run:
     working-directory: BE
