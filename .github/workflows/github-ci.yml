@@ -63,7 +63,7 @@ jobs:
           key: ${{ secrets.AWS_KEY }}
           port: ${{ secrets.AWS_PORT }}
           script: |
-            sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/auth-service:latest
+            sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/alterra-service:latest
             sudo docker stop alterra-service
             sudo docker rm alterra-service
-            sudo docker run -d -p 8080:8080 --name auth-service ${{ secrets.DOCKERHUB_USERNAME }}/auth-service:latest
+            sudo docker run -d -p 8080:8080 --name alterra-service ${{ secrets.DOCKERHUB_USERNAME }}/alterra-service:latest
