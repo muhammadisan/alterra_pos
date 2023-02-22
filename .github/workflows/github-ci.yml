@@ -40,7 +40,7 @@ jobs:
           
       - name: Run shell script to remove permission
         run: |
-          git update-index --chmod=+x ./mvnw
+          git update-index --chmod=+x mvnw
           git commit -m "Changing file permissions"
           
       - name: Maven Package
