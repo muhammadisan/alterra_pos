@@ -19,6 +19,11 @@ jobs:
       - name: Code Checkout
         uses: actions/checkout@v2
         
+      - name: Config github
+        run: |
+        	git config --global user.email "muhammadisan2015@gmail.com"
+          git config --global user.name "muhammadisan"
+          
       - name: Run shell script to remove permission
         run: |
           git update-index --chmod=+x ./mvnw
