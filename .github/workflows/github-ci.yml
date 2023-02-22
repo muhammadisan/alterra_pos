@@ -33,15 +33,13 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-maven-
 
-      - name: Config github
-        run: |
-          git config --global user.email "muhammadisan2015@gmail.com"
-          git config --global user.name "muhammadisan"
+#       - name: Config github
+#         run: |
+#           git config --global user.email "muhammadisan2015@gmail.com"
+#           git config --global user.name "muhammadisan"
           
-      - name: Run shell script to remove permission
-        run: |
-          git update-index --chmod=+x mvnw
-          git commit -m "Changing file permissions"
+      - name: Change mvnw permission
+        run: chmod +x ./mvnw
           
       - name: Maven Package
         run: ./mvnw clean package
