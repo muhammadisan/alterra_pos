@@ -35,9 +35,6 @@ jobs:
           
       - name: Change mvnw permission
         run: chmod +x ./mvnw
-          
-      # - name: Maven Package
-      #   run: ./mvnw clean package
 
       - name: Maven install
         run: ./mvnw clean install
@@ -57,3 +54,16 @@ jobs:
           context: ./BE
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/alterra-pos:latest
+      
+      - name: Docker
+        uses: appleboy/ssh-action@v0.1.7
+        with:
+          host: ${{ secrets.AWS_HOST }}
+          username: ${{ secrets.AWS_USERNAME }}
+          key: ${{ secrets.AWS_KEY }}
+          port: ${{ secrets.AWS_PORT }}
+          script: |
+            sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/auth-service:latest
+            sudo docker stop alterra-service
+            sudo docker rm alterra-service
+            sudo docker run -d -p 8080:8080 --name auth-service ${{ secrets.DOCKERHUB_USERNAME }}/auth-service:latest
