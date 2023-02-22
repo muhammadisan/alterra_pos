@@ -47,7 +47,7 @@ class PosApplicationTests {
 	// }
 
 	@Test
-	public void givenProductsList_whenGetAllProducts_thenReturnProductsList() {
+	void contextLoads() {
 		// // given
 		// given(productRepository.findAllByIsValidTrue()).willReturn(List.of(product));
 
