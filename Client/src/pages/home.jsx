@@ -268,8 +268,8 @@ const Home = () => {
                   <div className="card-body">
                     <h2 className="card-title">{item.name}</h2>
                     <p className="text-sm">{item.description}</p>
-                    <div className="flex-grow w-full text-2xl">
-                      <span className="font-light text-gray-400 text-md">
+                    <div className="flex-grow w-full text-base">
+                      <span className="font-light text-gray-400">
                         Rp{" "}
                       </span>
                       {formatRupiah(item.priceAndStock.price + "")}
@@ -302,7 +302,7 @@ const Home = () => {
             </div>
 
             <div className={`h-3/6 overflow-y-auto flex flex-col w-full border-opacity-50 ${selectedProducts.length == 0 && "place-content-center"}`}>
-              {selectedProducts.length == 0 && <div className="m-auto">No orders yet</div>}
+              {selectedProducts.length == 0 && <div className="m-auto text-lg">No orders yet</div>}
               {selectedProducts.map((item) => (
                 <div key={item.id}>
                   <div className="grid h-20 mb-1 card bg-base-100 rounded-box grid grid-cols-6 place-content-center">

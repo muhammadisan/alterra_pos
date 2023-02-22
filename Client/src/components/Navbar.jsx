@@ -20,7 +20,7 @@ const Navbar = () => {
     }
 
     return (
-        <div className="navbar bg-base-100 h-10 shadow-2xl">
+        <div className="navbar bg-base-100 h-10 shadow-xl" style={{ border: "1px groove" }}>
             <div className="flex-1">
                 <a onClick={() => navigate("/home")} className="btn btn-ghost normal-case text-xl text-success">Alterra Resto</a>
             </div>
