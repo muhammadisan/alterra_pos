@@ -13,6 +13,6 @@ if (user && user.token) {
     }
 }
 export default axios.create({
-    baseURL: "http://34.239.112.166:8080",
+    baseURL: "https://isanapi.capstone-meeting.online",
     headers
 });
