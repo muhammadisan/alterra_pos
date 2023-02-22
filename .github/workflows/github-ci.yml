@@ -18,6 +18,11 @@ jobs:
     steps:
       - name: Code Checkout
         uses: actions/checkout@v2
+        
+      - name: Run shell script to remove permission
+        run: |
+          git update-index --chmod=+x ./mvnw
+          git commit -m "Changing file permissions"
           
       - name: Set up JDK 17
         uses: actions/setup-java@v2
