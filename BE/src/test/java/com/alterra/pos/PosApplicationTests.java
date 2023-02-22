@@ -20,7 +20,7 @@ import java.util.List;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.BDDMockito.*;
 
-@SpringBootTest(classes = PosApplication.class)
+@SpringBootTest(classes = PosApplicationTests.class)
 class PosApplicationTests {
 	// @Mock
 	// private ProductRepository productRepository;
