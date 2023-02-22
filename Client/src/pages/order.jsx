@@ -6,7 +6,6 @@ import http from "../http";
 const Order = () => {
   const [data, setData] = useState([]);
   const [filterValue, setFilterValue] = useState("");
-  const [fetchStatus] = useState(true);
 
   const getOrders = async () => {
     try {
@@ -57,16 +56,11 @@ const Order = () => {
   }, []);
 
   return (
-    <div className="w-full bg-white py-3">
+    <div className="w-full bg-white py-3 overflow-x-hidden">
       <div className="flex flex-row justify-between">
         <h2 className="pl-4 text-2xl">Orders</h2>
-        <div className="text-end">
-          <input
-            onChange={handleFilterOrder}
-            type="text"
-            className="rounded-lg border-transparent flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent"
-            placeholder="Order No"
-          />
+        <div className="text-end" style={{ paddingRight: "20px" }}>
+          <input type="text" placeholder="Order No" onChange={handleFilterOrder} className="input input-bordered w-100 max-w-xs mr-2" />
         </div>
       </div>
       <div className="px-4 py-4 -mx-4 overflow-x-auto sm:-mx-8 sm:px-8">
@@ -84,7 +78,7 @@ const Order = () => {
             <tbody>
               {filteredData?.map((res) => {
                 return (
-                  <tr key={res.id}>
+                  <tr key={res.id} className="hover">
                     <td className="text-base pl-8">{res.orderNo}</td>
                     <td className="text-base pl-8">{res.receiptNo}</td>
                     <td className="text-base pl-8">{res.paymentMethod}</td>

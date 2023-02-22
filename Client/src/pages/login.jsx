@@ -1,12 +1,10 @@
-import React, { useEffect, useState, useRef } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { register, login, logout } from "../actions/auth";
+import React, { useState } from "react";
+import { useDispatch } from "react-redux";
+import { register, login } from "../actions/auth";
 import { useNavigate } from "react-router-dom";
-import http from "../http"
 import { useAlert } from "react-alert";
 
 const Login = () => {
-    const user = useSelector(state => state.auth);
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const alert = useAlert();
@@ -70,15 +68,15 @@ const Login = () => {
                                 <div className="space-y-5">
                                     <div className="space-y-0">
                                         <label className="text-sm font-medium text-gray-700 tracking-wide">Full Name</label>
-                                        <input value={name} onChange={(e) => setName(e.target.value)} className=" w-full text-base px-4 py-2 border  border-gray-300 rounded-lg focus:outline-none focus:border-green-400" type placeholder="Jhane Doe" />
+                                        <input value={name} onChange={(e) => setName(e.target.value)} className=" w-full text-base px-4 py-2 border  border-gray-300 rounded-lg focus:outline-none focus:border-green-400" type="text" placeholder="Jhane Doe" />
                                     </div>
                                     <div className="space-y-0">
                                         <label className="text-sm font-medium text-gray-700 tracking-wide">Phone</label>
-                                        <input value={phone} onChange={(e) => setPhone(e.target.value)} className=" w-full text-base px-4 py-2 border  border-gray-300 rounded-lg focus:outline-none focus:border-green-400" type placeholder="08XXXXXXXXXX" />
+                                        <input value={phone} onChange={(e) => setPhone(e.target.value)} className=" w-full text-base px-4 py-2 border  border-gray-300 rounded-lg focus:outline-none focus:border-green-400" type="text" placeholder="08XXXXXXXXXX" />
                                     </div>
                                     <div className="space-y-0">
                                         <label className="text-sm font-medium text-gray-700 tracking-wide">Username</label>
-                                        <input value={username} onChange={(e) => setUsername(e.target.value)} className=" w-full text-base px-4 py-2 border  border-gray-300 rounded-lg focus:outline-none focus:border-green-400" type placeholder="username" />
+                                        <input value={username} onChange={(e) => setUsername(e.target.value)} className=" w-full text-base px-4 py-2 border  border-gray-300 rounded-lg focus:outline-none focus:border-green-400" type="text" placeholder="username" />
                                     </div>
                                     <div className="space-y-0">
                                         <label className="mb-5 text-sm font-medium text-gray-700 tracking-wide">
@@ -92,11 +90,11 @@ const Login = () => {
                                         </label>
                                         <div className="flex">
                                             <div className="flex pr-5">
-                                                <input onClick={() => setRole("ROLE_MEMBERSHIP")} type="radio" name="radio-5" className="radio radio-success -mt-0" checked={role == "ROLE_MEMBERSHIP"} />
+                                                <input onChange={() => setRole("ROLE_MEMBERSHIP")} type="radio" name="radio-5" className="radio radio-success -mt-0" checked={role == "ROLE_MEMBERSHIP"} />
                                                 <div className="pl-1">Member</div>
                                             </div>
                                             <div className="flex">
-                                                <input onClick={() => setRole("ROLE_ADMIN")} type="radio" name="radio-5" className="radio radio-success -mt-0" checked={role == "ROLE_ADMIN"} />
+                                                <input onChange={() => setRole("ROLE_ADMIN")} type="radio" name="radio-5" className="radio radio-success -mt-0" checked={role == "ROLE_ADMIN"} />
                                                 <div className="pl-1">Admin</div>
                                             </div>
                                         </div>
@@ -104,7 +102,7 @@ const Login = () => {
                                     {role == "ROLE_ADMIN"
                                         && <div className="space-y-0">
                                             <label className="text-sm font-medium text-gray-700 tracking-wide">Position</label>
-                                            <input value={position} onChange={(e) => setPosition(e.target.value)} className=" w-full text-base px-4 py-2 border  border-gray-300 rounded-lg focus:outline-none focus:border-green-400" type placeholder="Cashier" />
+                                            <input value={position} onChange={(e) => setPosition(e.target.value)} className=" w-full text-base px-4 py-2 border  border-gray-300 rounded-lg focus:outline-none focus:border-green-400" type="text" placeholder="Cashier" />
                                         </div>}
                                     <div className="flex items-center text-xs">
                                         <div className="flex items-center">
@@ -117,7 +115,7 @@ const Login = () => {
                                         </div>
                                     </div>
                                     <div>
-                                        <button onClick={signUp} type="submit" className={`${loading ? "loading" : ""} btn btn-success w-full flex justify-center bg-green-400  hover:bg-green-500 text-gray-100 p-3  rounded-full tracking-wide font-semibold  shadow-lg cursor-pointer transition ease-in duration-500`}>
+                                        <button onClick={signUp} type="submit" className={`${loading ? 'loading' : ''} btn btn-success w-full flex justify-center bg-green-400  hover:bg-green-500 text-gray-100 p-3  rounded-full tracking-wide font-semibold  shadow-lg cursor-pointer transition ease-in duration-500`}>
                                             Sign Up
                                         </button>
                                     </div>
@@ -138,7 +136,7 @@ const Login = () => {
                                 <div className="space-y-5">
                                     <div className="space-y-2">
                                         <label className="text-sm font-medium text-gray-700 tracking-wide">Username</label>
-                                        <input className=" w-full text-base px-4 py-2 border  border-gray-300 rounded-lg focus:outline-none focus:border-green-400" value={username} onChange={(e) => setUsername(e.target.value)} type placeholder="username" />
+                                        <input className=" w-full text-base px-4 py-2 border  border-gray-300 rounded-lg focus:outline-none focus:border-green-400" value={username} onChange={(e) => setUsername(e.target.value)} type="text" placeholder="username" />
                                     </div>
                                     <div className="space-y-2">
                                         <label className="mb-5 text-sm font-medium text-gray-700 tracking-wide">

@@ -4,7 +4,7 @@ import { MdAddShoppingCart } from "react-icons/md";
 import { AiOutlineHome } from "react-icons/ai";
 import { BiBox } from "react-icons/bi";
 import { Link } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 
 const Sidebar = () => {
   const user = useSelector(state => state.auth);

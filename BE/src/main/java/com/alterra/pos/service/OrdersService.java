@@ -5,8 +5,6 @@ import com.alterra.pos.dto.ResponseDto;
 import com.alterra.pos.entity.*;
 import com.alterra.pos.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.InputStreamResource;
-import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;

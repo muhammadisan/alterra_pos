@@ -1,7 +1,6 @@
 package com.alterra.pos.controller;
 
 import com.alterra.pos.dto.ReceiptDto;
-import com.alterra.pos.dto.ResponseDto;
 import com.alterra.pos.entity.*;
 import com.alterra.pos.service.ReceiptService;
 import org.springframework.beans.factory.annotation.Autowired;

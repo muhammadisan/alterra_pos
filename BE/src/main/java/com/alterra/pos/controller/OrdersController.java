@@ -1,7 +1,6 @@
 package com.alterra.pos.controller;
 
 import com.alterra.pos.dto.OrdersDto;
-import com.alterra.pos.dto.ResponseDto;
 import com.alterra.pos.entity.*;
 import com.alterra.pos.service.OrdersService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,7 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.ByteArrayOutputStream;
 import java.util.List;
 import java.util.Map;
 

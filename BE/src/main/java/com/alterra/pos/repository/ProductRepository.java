@@ -13,9 +13,6 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
     @Query
     List<Product> findAllByIsValidTrue();
 
-//    @Query("SELECT p FROM Product p INNER JOIN p. p and")
-//    List<Product> findAllByIsValidTrueAndAvailablePrice();
-
     @Query("SELECT p FROM Product p WHERE p.category.id = ?1")
     List<Product> findAllByCategoryId(Integer categoryId);
 

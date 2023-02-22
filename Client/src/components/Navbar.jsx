@@ -25,7 +25,7 @@ const Navbar = () => {
                 <a onClick={() => navigate("/home")} className="btn btn-ghost normal-case text-xl text-success">Alterra Resto</a>
             </div>
             {user.isLoggedIn
-                ? <div><span className="mx-3">Hello, {user.user.username}</span><button className={`btn btn-sm btn-success btn-outline mr-4 ${loading ? "loading" : ""}`} onClick={logOut}>Log Out</button></div>
+                ? <div><span className="mx-3">Hello, {user.user.name}</span><button className={`btn btn-sm btn-success btn-outline mr-4 ${loading ? "loading" : ""}`} onClick={logOut}>Log Out</button></div>
                 : ""}
         </div>
     )

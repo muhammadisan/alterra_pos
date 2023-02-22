@@ -1,5 +1,5 @@
-import React, { useEffect, useState, useRef } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import React, { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import http from "../http"
 import { BiPlus, BiMinus } from "react-icons/bi";
 import { useAlert } from "react-alert";
@@ -13,15 +13,12 @@ const Home = () => {
   const [subtotal, setSubtotal] = useState(0);
   const [discount, setDiscount] = useState(0);
   const [total, setTotal] = useState(0);
-  const [userRole, setUserRole] = useState("");
   const [paymentMethodId, setPaymentMethodId] = useState(null);
-  const componentRef = useRef();
   const [getOrderNo, setGetOrderNo] = useState("");
   const [tempOrderNo, setTempOrderNo] = useState("");
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (user.isLoggedIn) setUserRole(user.user.role);
     async function doGetRequest() {
       let res = await http.get(`/products`);
       let dataFood = res.data;
@@ -167,11 +164,20 @@ const Home = () => {
           alert.error(res.data.message);
         }
         setLoading(false);
+      }).catch((err) => {
+        let file = new Blob([err.response.data], { type: 'application/json' });
+        file.text().then(value => {
+          self.objectName = JSON.parse(value);
+          alert.error(self.objectName.message);
+        }).catch(error => {
+          alert.error("Something went wrong" + error);
+        });
+        setLoading(false);
       })
     } else if (user.user.role == "ROLE_ADMIN") {
       setLoading(true);
       http.post(`/receipts`, { orderNo: tempOrderNo, products, paymentMethodId, userId: user.user.id }, { responseType: 'blob' }).then((res) => {
-        if (res.headers["content-type"] == "application/pdf") {
+        if (res?.headers["content-type"] == "application/pdf") {
           alert.success("Success create receipt");
           handleClear();
 
@@ -185,6 +191,15 @@ const Home = () => {
         } else {
           alert.error(res.data.message);
         }
+        setLoading(false);
+      }).catch((err) => {
+        let file = new Blob([err.response.data], { type: 'application/json' });
+        file.text().then(value => {
+          self.objectName = JSON.parse(value);
+          alert.error(self.objectName.message);
+        }).catch(error => {
+          alert.error("Something went wrong" + error);
+        });
         setLoading(false);
       })
     }
@@ -202,7 +217,6 @@ const Home = () => {
       if (res.data.length == 0) {
         alert.error("Order No not fond");
       } else {
-        console.log(res.data)
         setSelectedProducts([]);
         setSubtotal(0);
         setDiscount(0);
@@ -260,11 +274,8 @@ const Home = () => {
               {dataFood.map((item) => (
                 <div
                   key={item.id}
-                  className="card card-compact shadow-xl bg-base-100"
+                  className="card card-compact shadow-xl bg-white"
                 >
-                  {/* <figure>
-                    <img src="/images/stock/photo-1606107557195-0e29a4b5b4aa.jpg" />
-                  </figure> */}
                   <div className="card-body">
                     <h2 className="card-title">{item.name}</h2>
                     <p className="text-sm">{item.description}</p>
@@ -346,7 +357,7 @@ const Home = () => {
                       <span className="font-light">
                         Rp{" "}
                       </span>
-                      {formatRupiah("0")}
+                      {formatRupiah(discount + "")}
                     </div>
                   </div>
                 </div>
@@ -370,7 +381,7 @@ const Home = () => {
                   {dataPaymentMethod.map((payment) => {
                     return (
                       <div key={payment.id} className="col-span-1 flex flex-col">
-                        <div className="flex justify-center"><input type="radio" name="radio-5" className="radio radio-success" onClick={() => setPaymentMethodId(payment.id)} checked={payment.id == paymentMethodId} /></div>
+                        <div className="flex justify-center"><input type="radio" name="radio-5" className="radio radio-success" onChange={() => setPaymentMethodId(payment.id)} checked={payment.id == paymentMethodId} /></div>
                         <label className="flex justify-center text-base">{payment.payment}</label>
                       </div>
                     )

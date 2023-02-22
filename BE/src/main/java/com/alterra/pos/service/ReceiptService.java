@@ -38,10 +38,6 @@ public class ReceiptService {
     @Autowired
     SpringTemplateEngine templateEngine;
 
-//    public List<Receipt> getReceipts() {
-//        return receiptRepository.findAll();
-//    }
-
     public List<Map> getReceipts() {
         List<List<Object>> receipts = receiptRepository.findAllGroupByReceiptNo();
         List<Map> response = new ArrayList<Map>();
