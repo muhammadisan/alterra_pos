@@ -13,6 +13,8 @@ import FormControl from '@mui/material/FormControl';
 import Button from '@mui/material/Button';
 import DeleteForeverOutlinedIcon from '@mui/icons-material/DeleteForeverOutlined';
 import Edit from '@mui/icons-material/Edit';
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 const style = {
     position: 'absolute',
@@ -27,6 +29,8 @@ const style = {
 };
 
 export default function Stock() {
+    const user = useSelector(state => state.auth);
+    const navigate = useNavigate();
     const [stocks, setStocks] = useState([]);
     const [categories, setCategories] = useState([]);
     const [data, setData] = useState([]);
@@ -142,6 +146,8 @@ export default function Stock() {
     ];
 
     useEffect(() => {
+        if (!user.isLoggedIn) navigate("/");
+        if (user.user.role != "ROLE_ADMIN") navigate("/home");
         http.get(`/products`).then((res) => {
             setStocks(res.data)
             let stock = res.data.map((stock, index) => {
@@ -184,8 +190,9 @@ export default function Stock() {
                 setStocks([...stocks, res.data])
                 setData([...data, {
                     product_id: res.data.id,
-                    no: data.length + 1,
                     category: res.data.category.name,
+                    no: data.length + 1,
+                    description: res.data.description,
                     name: res.data.name,
                     price: res.data.priceAndStock.price,
                     stock: res.data.priceAndStock.stock

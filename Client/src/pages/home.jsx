@@ -175,6 +175,11 @@ const Home = () => {
         setLoading(false);
       })
     } else if (user.user.role == "ROLE_ADMIN") {
+      if (tempOrderNo == "") {
+        alert.error("Please input Order No first");
+        return;
+      }
+
       setLoading(true);
       http.post(`/receipts`, { orderNo: tempOrderNo, products, paymentMethodId, userId: user.user.id }, { responseType: 'blob' }).then((res) => {
         if (res?.headers["content-type"] == "application/pdf") {
@@ -208,6 +213,7 @@ const Home = () => {
   function getOrders() {
     if (getOrderNo.length != 13) {
       alert.error("Order No length must be 13");
+      setTempOrderNo("");
       return;
     }
 
@@ -216,6 +222,7 @@ const Home = () => {
     http.get(`/orders/orderNo/${getOrderNo}`).then((res) => {
       if (res.data.length == 0) {
         alert.error("Order No not fond");
+        setTempOrderNo("");
       } else {
         setSelectedProducts([]);
         setSubtotal(0);

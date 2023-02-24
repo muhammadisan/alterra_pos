@@ -1,9 +1,13 @@
 import React, { useMemo } from "react";
 import { useState } from "react";
 import { useEffect } from "react";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import http from "../http";
 
 const Order = () => {
+  const user = useSelector(state => state.auth);
+  const navigate = useNavigate(); 
   const [data, setData] = useState([]);
   const [filterValue, setFilterValue] = useState("");
 
@@ -52,6 +56,8 @@ const Order = () => {
     return tanggal.toLocaleString();
   }
   useEffect(() => {
+    if (!user.isLoggedIn) navigate("/");
+    if (user.user.role != "ROLE_ADMIN") navigate("/home");
     getAll();
   }, []);
 

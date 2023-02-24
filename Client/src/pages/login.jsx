@@ -1,10 +1,11 @@
-import React, { useState } from "react";
-import { useDispatch } from "react-redux";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { register, login } from "../actions/auth";
 import { useNavigate } from "react-router-dom";
 import { useAlert } from "react-alert";
 
 const Login = () => {
+    const user = useSelector(state => state.auth);
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const alert = useAlert();
@@ -16,6 +17,10 @@ const Login = () => {
     const [role, setRole] = useState("ROLE_MEMBERSHIP");
     const [position, setPosition] = useState("");
     const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+        if (user.isLoggedIn) navigate("/home");
+    }, [user])
 
     function signIn() {
         if (username && password) {
