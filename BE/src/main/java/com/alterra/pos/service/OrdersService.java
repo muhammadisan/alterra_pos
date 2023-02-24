@@ -53,7 +53,6 @@ public class OrdersService {
             response.add(map);
         }
         return response;
-        // return ordersRepository.findAll();
     }
 
     public List<Orders> getOrdersByOrderNo(String orderNo) {
